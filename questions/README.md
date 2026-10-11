@@ -88,3 +88,5 @@ Invalid files will be logged to the console and skipped.
 - `technology-services.json` - Technology & Services
 - `billing-pricing.json` - Billing & Pricing
 - `management-governance.json` - Management & Governance
+- `kubernetes-fundamentals.json` - Kubernetes Fundamentals
+- `kubernetes-advanced.json` - Kubernetes Advanced
