@@ -1,0 +1,431 @@
+{
+  "id": "kubernetes-advanced",
+  "title": "Kubernetes Advanced",
+  "icon": "☸️",
+  "description": "Deepen your skills with StatefulSets, NetworkPolicy, HPA, Ingress, Jobs, storage, RBAC, and troubleshooting scenarios",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Which component is typically required to provide a stable network identity for Pods of a StatefulSet?",
+      "options": [
+        "Ingress",
+        "Headless Service",
+        "NodePort Service",
+        "ConfigMap"
+      ],
+      "correct": 1,
+      "explanation": "A Headless Service (with clusterIP: None) enables direct DNS discovery of each StatefulSet Pod, giving replicas stable network identities."
+    },
+    {
+      "id": 2,
+      "question": "What is the typical DNS name pattern for a Pod in a StatefulSet associated with a Headless Service?",
+      "options": [
+        "<pod-name>.<headless-service>.<namespace>.svc.cluster.local",
+        "<service>.<pod>.cluster.local",
+        "<namespace>.<pod-name>.svc.cluster.local",
+        "<pod-IP>.<service>.local"
+      ],
+      "correct": 0,
+      "explanation": "StatefulSet Pods get stable DNS names of the form <pod-name>.<headless-service>.<namespace>.svc.cluster.local, combining the Pod name and Headless Service for discovery."
+    },
+    {
+      "id": 3,
+      "question": "What happens when a NetworkPolicy selects Pods and defines ingress or egress rules for them?",
+      "options": [
+        "All traffic in the Cluster is blocked",
+        "All traffic is allowed if there is a Service",
+        "Selected Pods are isolated in the defined direction, and only traffic matching the allowed rules is permitted",
+        "The Policy automatically changes the labels of the Pods"
+      ],
+      "correct": 2,
+      "explanation": "After isolation in a given direction, only traffic allowed by the relevant NetworkPolicy rules can pass. The effect is limited to the selected Pods and direction, not the whole cluster."
+    },
+    {
+      "id": 4,
+      "question": "Which component typically provides the CPU and memory metrics that a standard HPA uses?",
+      "options": [
+        "CoreDNS",
+        "etcd dashboard",
+        "Ingress Controller",
+        "Metrics Server"
+      ],
+      "correct": 3,
+      "explanation": "Metrics Server collects and exposes resource metrics (such as CPU and memory) that Horizontal Pod Autoscaler can consume."
+    },
+    {
+      "id": 5,
+      "question": "Why is it important to define CPU requests when HPA is based on CPU utilization percentage?",
+      "options": [
+        "To restart the kubelet",
+        "Because utilization percentage is calculated relative to the Container's CPU request",
+        "To allow the Pod to receive an IP address",
+        "Because requests define the number of replicas"
+      ],
+      "correct": 1,
+      "explanation": "Without an appropriate CPU request, Kubernetes cannot correctly compute utilization as a percentage of the request, so HPA targeting CPU utilization will not work reliably."
+    },
+    {
+      "id": 6,
+      "question": "In which API group/version is the modern stable Ingress resource defined?",
+      "options": [
+        "v1",
+        "extensions/v1beta1",
+        "networking.k8s.io/v1",
+        "apps/v1"
+      ],
+      "correct": 2,
+      "explanation": "Stable Ingress is defined in networking.k8s.io/v1. Older APIs such as extensions/v1beta1 have been removed from modern Kubernetes versions."
+    },
+    {
+      "id": 7,
+      "question": "What is the difference between completions and parallelism in a Job?",
+      "options": [
+        "completions is the number of Nodes and parallelism is the number of Namespaces",
+        "completions is the run time and parallelism is the DNS policy",
+        "There is no difference between them",
+        "completions is the number of required successful completions; parallelism is how many Pods can run in parallel"
+      ],
+      "correct": 3,
+      "explanation": "completions defines how many successful finishes are required, while parallelism limits how many Pods may run concurrently."
+    },
+    {
+      "id": 8,
+      "question": "What is the default concurrencyPolicy for a CronJob?",
+      "options": [
+        "Allow",
+        "Forbid",
+        "Replace",
+        "Suspend"
+      ],
+      "correct": 0,
+      "explanation": "The default concurrencyPolicy is Allow, which permits Jobs created by the same CronJob to run concurrently. Forbid and Replace are alternative policies, not the default."
+    },
+    {
+      "id": 9,
+      "question": "Which PersistentVolume reclaim policy is considered deprecated?",
+      "options": [
+        "Retain",
+        "Delete",
+        "Recycle",
+        "WaitForFirstConsumer"
+      ],
+      "correct": 2,
+      "explanation": "Recycle is deprecated and should not be relied on in new solutions. Retain and Delete remain valid reclaim policies; WaitForFirstConsumer is a binding/provisioning mode, not a reclaim policy."
+    },
+    {
+      "id": 10,
+      "question": "Which Access Modes are the standard recognized modes for a PersistentVolume?",
+      "options": [
+        "ReadOnly, ReadWrite, Execute",
+        "ReadWriteOnce, ReadOnlyMany, ReadWriteMany",
+        "Single, Shared, Global",
+        "Read, Write, Admin"
+      ],
+      "correct": 1,
+      "explanation": "The classic standard Access Modes are ReadWriteOnce (RWO), ReadOnlyMany (ROX), and ReadWriteMany (RWX). ReadWriteOncePod is a newer additional mode."
+    },
+    {
+      "id": 11,
+      "question": "What does volumeBindingMode: WaitForFirstConsumer mean?",
+      "options": [
+        "The PVC is deleted immediately after the Pod is created",
+        "All Volumes become ReadOnly",
+        "Binding or provisioning of storage is delayed until a Pod that uses the PVC is scheduled",
+        "The Pod is forced to run on the Control Plane"
+      ],
+      "correct": 2,
+      "explanation": "WaitForFirstConsumer delays volume binding/provisioning until a consuming Pod is scheduled, so topology and scheduling constraints can be considered before storage is chosen."
+    },
+    {
+      "id": 12,
+      "question": "What is the main difference between a Role and a ClusterRole?",
+      "options": [
+        "A Role is limited to a Namespace; a ClusterRole can define cluster-scoped permissions and can also be bound with a RoleBinding in a Namespace",
+        "A Role is only for Pods and a ClusterRole is only for Nodes",
+        "A Role is for users and a ClusterRole is for passwords",
+        "There is no difference"
+      ],
+      "correct": 0,
+      "explanation": "Role is namespaced. ClusterRole can cover cluster-scoped or namespaced resources and can be bound cluster-wide or within a Namespace via RoleBinding."
+    },
+    {
+      "id": 13,
+      "question": "What does apiGroups: [\"\"] mean in an RBAC rule?",
+      "options": [
+        "All API groups",
+        "The apps API group",
+        "An empty group that grants access to no resources",
+        "The core API group, where resources such as Pods and Services live"
+      ],
+      "correct": 3,
+      "explanation": "An empty string in apiGroups refers to the core API group (sometimes called the legacy group), which includes Pods, Services, and similar resources."
+    },
+    {
+      "id": 14,
+      "question": "Which command checks whether the user developer1 can create Pods?",
+      "options": [
+        "kubectl get pods --user developer1",
+        "kubectl auth can-i create pods --as developer1",
+        "kubectl describe role developer1",
+        "kubectl create role developer1"
+      ],
+      "correct": 1,
+      "explanation": "kubectl auth can-i checks authorization. The --as flag impersonates the requested identity so you can evaluate permissions as that user."
+    },
+    {
+      "id": 15,
+      "question": "What does pathType: Prefix do in an Ingress rule?",
+      "options": [
+        "Exact match to the path only",
+        "Match every path for every Host",
+        "Match by path prefix, including matching path element boundaries",
+        "Automatically redirect to HTTPS"
+      ],
+      "correct": 2,
+      "explanation": "Prefix matching uses the beginning of the path according to Kubernetes path-element boundary rules. Exact matching is pathType: Exact; HTTPS redirects are configured separately."
+    },
+    {
+      "id": 16,
+      "question": "What is the difference between a Service and an Ingress?",
+      "options": [
+        "Both are used only for storing files",
+        "Ingress replaces all Services",
+        "A Service is used only for CronJobs",
+        "A Service provides a stable access point to Pods; Ingress defines HTTP/HTTPS routing, typically via an Ingress Controller"
+      ],
+      "correct": 3,
+      "explanation": "A Service gives stable network access and load balancing to Pods. Ingress describes external HTTP/HTTPS routing rules that an Ingress Controller implements."
+    },
+    {
+      "id": 17,
+      "question": "What happens if a Readiness Probe keeps failing?",
+      "options": [
+        "The Container is deleted immediately",
+        "The Pod is marked not ready and typically stops receiving traffic from Services that select ready Pods",
+        "The Node is restarted",
+        "A new Deployment is created automatically"
+      ],
+      "correct": 1,
+      "explanation": "Readiness determines whether the Pod should receive traffic. Repeated readiness failures remove the Pod from Service endpoints; they do not by themselves restart the container."
+    },
+    {
+      "id": 18,
+      "question": "What happens when a Liveness Probe fails beyond its configured failure threshold?",
+      "options": [
+        "Kubernetes restarts the Container",
+        "The Pod always remains unchanged",
+        "The Service is deleted",
+        "A new Namespace is created"
+      ],
+      "correct": 0,
+      "explanation": "Sustained liveness failures cause the kubelet to restart the Container. Liveness does not delete Services or create Namespaces."
+    },
+    {
+      "id": 19,
+      "question": "What is the difference between HPA and the Cluster Autoscaler?",
+      "options": [
+        "Both only increase the number of Nodes",
+        "HPA changes the number of Nodes; Cluster Autoscaler changes the number of Pods",
+        "HPA adjusts the replica count of a workload; Cluster Autoscaler adjusts the number of Nodes as needed",
+        "HPA and Cluster Autoscaler are different names for the same component"
+      ],
+      "correct": 2,
+      "explanation": "Horizontal Pod Autoscaler scales Pod replicas. Cluster Autoscaler adds or removes Nodes based on pending Pods and cluster capacity conditions."
+    },
+    {
+      "id": 20,
+      "question": "What is the purpose of RBAC in Kubernetes?",
+      "options": [
+        "Assigning IP addresses",
+        "Controlling which actions an identity is allowed to perform on resources",
+        "Compressing container images",
+        "Load balancing network traffic"
+      ],
+      "correct": 1,
+      "explanation": "RBAC defines permissions through Roles/ClusterRoles and bindings that associate those permissions with identities."
+    },
+    {
+      "id": 21,
+      "question": "What is a NetworkPolicy used for?",
+      "options": [
+        "Changing the Kubernetes version",
+        "Managing passwords",
+        "Limiting ingress/egress network traffic between Pods and other destinations according to selected rules",
+        "Changing the number of replicas"
+      ],
+      "correct": 2,
+      "explanation": "NetworkPolicy defines which traffic is allowed to and from selected Pods, subject to support from the cluster's network plugin."
+    },
+    {
+      "id": 22,
+      "question": "A Pod is in CrashLoopBackOff. What should you check first to understand the crash cause?",
+      "options": [
+        "Delete all Nodes",
+        "Show the Container logs (for example with kubectl logs) and also check describe/events",
+        "Create a new Cluster",
+        "Immediately change the Service to NodePort"
+      ],
+      "correct": 1,
+      "explanation": "logs, logs --previous when needed, and describe/events provide information about startup errors and related events. Deleting nodes or recreating clusters is not a first diagnostic step."
+    },
+    {
+      "id": 23,
+      "question": "A Deployment is configured with 3 replicas, but only 2 Pods exist. Which initial check is most useful?",
+      "options": [
+        "kubectl get namespaces only",
+        "kubectl delete node <node>",
+        "kubectl describe deployment <name>",
+        "kubectl expose deployment <name>"
+      ],
+      "correct": 2,
+      "explanation": "describe shows status, events, and conditions that can explain why not all replicas were created. Also check the related ReplicaSet and Pods."
+    },
+    {
+      "id": 24,
+      "question": "Pods are reachable inside the Cluster, but the Service is not routing to them. What should you check first?",
+      "options": [
+        "Whether the Service selector matches the Pod labels, and whether targetPort is correct",
+        "Rename the Namespace",
+        "Delete the Deployment",
+        "Reinstall kubectl on all Nodes"
+      ],
+      "correct": 0,
+      "explanation": "A mismatched selector or incorrect targetPort are common causes. Also verify Endpoints/EndpointSlices and Pod readiness."
+    },
+    {
+      "id": 25,
+      "question": "How do you roll back a Deployment to a previous revision?",
+      "options": [
+        "kubectl delete deployment/<name>",
+        "kubectl scale deployment/<name> --replicas=0",
+        "kubectl get deployment/<name> -o yaml",
+        "kubectl rollout undo deployment/<name>"
+      ],
+      "correct": 3,
+      "explanation": "kubectl rollout undo returns the Deployment to a previous revision in the rollout history when a suitable history entry exists."
+    },
+    {
+      "id": 26,
+      "question": "A Pod stays Pending and an event shows insufficient CPU. What does that mean?",
+      "options": [
+        "The Scheduler could not find a Node that meets the resource and constraint requirements",
+        "The Image does not necessarily exist in the Registry",
+        "The Service selector is wrong",
+        "The Pod failed a Liveness Probe before it started"
+      ],
+      "correct": 0,
+      "explanation": "insufficient CPU means scheduling could not place the Pod because no suitable Node had enough free CPU (or other constraints blocked placement). Image pull and liveness issues usually occur after scheduling."
+    },
+    {
+      "id": 27,
+      "question": "A password was stored in a ConfigMap and in a Git repository. What is the correct next step?",
+      "options": [
+        "Leave it, because a ConfigMap is always encrypted",
+        "Move the secret to a Secret or appropriate secrets manager, restrict permissions, and rotate the exposed password",
+        "Move the password into a label on the Pod",
+        "Embed it in the container Image"
+      ],
+      "correct": 1,
+      "explanation": "Remove the secret from unsuitable sources, rotate it because it was exposed, use Secrets or a secrets manager with proper access controls, and consider encryption at rest. ConfigMaps are not intended for sensitive data."
+    },
+    {
+      "id": 28,
+      "question": "You need to run a backup every day at 02:00. Which resource should you use?",
+      "options": [
+        "StatefulSet",
+        "DaemonSet",
+        "CronJob",
+        "ReplicaSet"
+      ],
+      "correct": 2,
+      "explanation": "CronJob creates Jobs on a schedule using a cron expression, which fits a daily 02:00 backup task."
+    },
+    {
+      "id": 29,
+      "question": "Several Pods need to read and write the same shared files concurrently, and the storage provider supports this. Which Access Mode is appropriate?",
+      "options": [
+        "ReadWriteOnce only in every case",
+        "ReadOnlyMany",
+        "ReadWriteMany",
+        "ReadWriteOncePod"
+      ],
+      "correct": 2,
+      "explanation": "ReadWriteMany (RWX) is intended for volumes that can be mounted for read and write from multiple nodes when the CSI/backend supports it."
+    },
+    {
+      "id": 30,
+      "question": "You need to allow an identity to list Pods only in a specific Namespace. What is the appropriate access setup?",
+      "options": [
+        "A ClusterRoleBinding with admin permissions for the entire Cluster",
+        "A Role with get/list verbs on pods and a RoleBinding in that Namespace",
+        "Add a label named read-only to every Pod",
+        "Create a NetworkPolicy"
+      ],
+      "correct": 1,
+      "explanation": "A Role scopes permissions to one Namespace, and a RoleBinding associates those permissions with the identity in that Namespace. Cluster-admin is far too broad; labels and NetworkPolicy do not grant API read access."
+    }
+  ],
+  "documentation": "<h3>Kubernetes Advanced</h3><p>This study guide covers advanced Kubernetes topics beyond basic Pods and Deployments: stable identities, traffic policy, autoscaling, Ingress, Jobs, storage binding, RBAC, and day-2 troubleshooting.</p><h4>StatefulSets and Headless Services</h4><p>StatefulSets give each replica a stable identity and ordered lifecycle. Pair them with a <strong>Headless Service</strong> (<code>clusterIP: None</code>) so clients can resolve individual Pods via DNS:</p><ul><li>Pattern: <code>&lt;pod-name&gt;.&lt;headless-service&gt;.&lt;namespace&gt;.svc.cluster.local</code></li><li>Use when you need stable network names and often per-replica persistent storage</li></ul><h4>NetworkPolicy</h4><p>NetworkPolicy selects Pods with labels and defines allowed <strong>ingress</strong> and/or <strong>egress</strong> traffic. Once a direction is constrained, only matching allowed traffic can pass. Effects apply to selected Pods, not the entire cluster, and require a CNI that enforces NetworkPolicy.</p><h4>Autoscaling: HPA and Cluster Autoscaler</h4><ul><li><strong>Horizontal Pod Autoscaler (HPA):</strong> Adjusts workload replica counts from metrics such as CPU utilization.</li><li><strong>Metrics Server:</strong> Common source of CPU/memory metrics for HPA.</li><li><strong>CPU requests:</strong> Required for meaningful CPU utilization percentages (usage relative to request).</li><li><strong>Cluster Autoscaler:</strong> Adds or removes Nodes when Pods cannot be scheduled or capacity can be reclaimed.</li></ul><h4>Ingress</h4><ul><li>Stable API: <code>networking.k8s.io/v1</code></li><li>Defines HTTP/HTTPS routing to backend Services; an Ingress Controller implements the rules</li><li><code>pathType: Prefix</code> matches by path prefix with path-element boundary rules; use <code>Exact</code> for full-path matches</li></ul><h4>Jobs and CronJobs</h4><ul><li><strong>completions:</strong> How many successful finishes are required</li><li><strong>parallelism:</strong> How many Pods may run at once</li><li><strong>CronJob concurrencyPolicy:</strong> Default is <code>Allow</code>; alternatives include <code>Forbid</code> and <code>Replace</code></li></ul><h4>Storage: Access Modes, Binding, and Reclaim</h4><ul><li>Standard Access Modes: <strong>ReadWriteOnce</strong>, <strong>ReadOnlyMany</strong>, <strong>ReadWriteMany</strong></li><li><code>volumeBindingMode: WaitForFirstConsumer</code> delays binding/provisioning until a consuming Pod is scheduled</li><li>Reclaim policies: <strong>Retain</strong> and <strong>Delete</strong> are current; <strong>Recycle</strong> is deprecated</li></ul><h4>RBAC</h4><ul><li><strong>Role:</strong> Namespace-scoped permissions</li><li><strong>ClusterRole:</strong> Cluster-scoped (or reusable) permissions; can also be bound into a Namespace with RoleBinding</li><li><code>apiGroups: [\"\"]</code> means the <strong>core</strong> API group (Pods, Services, etc.)</li><li>Check access with <code>kubectl auth can-i ... --as &lt;identity&gt;</code></li></ul><h4>Probes and Troubleshooting</h4><ul><li><strong>Readiness Probe failure:</strong> Pod marked not ready; removed from Service traffic</li><li><strong>Liveness Probe failure:</strong> kubelet restarts the Container</li><li><strong>CrashLoopBackOff:</strong> Start with <code>kubectl logs</code> / <code>logs --previous</code> and <code>describe</code>/events</li><li><strong>Missing replicas:</strong> <code>kubectl describe deployment</code>, then ReplicaSet and Pods</li><li><strong>Service not routing:</strong> Verify selector labels, targetPort, Endpoints, and readiness</li><li><strong>Pending / insufficient CPU:</strong> Scheduler found no Node meeting resource/constraint needs</li><li><strong>Rollback:</strong> <code>kubectl rollout undo deployment/&lt;name&gt;</code></li><li><strong>Secrets hygiene:</strong> Never store passwords in ConfigMaps or Git; use Secrets/secrets managers and rotate exposed credentials</li></ul>",
+  "followUpQuestions": [
+    {
+      "question": "Which Service type is typically paired with a StatefulSet for per-Pod DNS discovery?",
+      "options": [
+        "LoadBalancer",
+        "Headless Service",
+        "ExternalName",
+        "NodePort"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Which component supplies resource metrics commonly used by HPA?",
+      "options": [
+        "Metrics Server",
+        "CoreDNS",
+        "kube-proxy",
+        "Ingress Controller"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "What is the default CronJob concurrencyPolicy?",
+      "options": [
+        "Forbid",
+        "Replace",
+        "Suspend",
+        "Allow"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "Which reclaim policy for PersistentVolumes is deprecated?",
+      "options": [
+        "Retain",
+        "Delete",
+        "Recycle",
+        "WaitForFirstConsumer"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "Which command evaluates whether an identity can perform an action?",
+      "options": [
+        "kubectl auth can-i",
+        "kubectl get events",
+        "kubectl explain",
+        "kubectl cluster-info"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "What does a failing Readiness Probe typically affect?",
+      "options": [
+        "Whether the Pod receives Service traffic",
+        "Whether etcd is compacted",
+        "Whether the Node is cordoned",
+        "Whether the Namespace is deleted"
+      ],
+      "correct": 0
+    }
+  ]
+}
