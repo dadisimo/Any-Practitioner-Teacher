@@ -1,0 +1,418 @@
+{
+  "id": "sdk-verification-automation",
+  "title": "SDK Verification & Automation",
+  "icon": "🧪",
+  "description": "Test strategy, harness design, coverage thinking, and automation leadership for SDKs",
+  "questions": [
+    {
+      "id": 1,
+      "type": "text",
+      "question": "You join as verification manager. The SDK has 8,000 tests, average runtime 14 hours, and no clear ownership. What is your first 30-day operating plan? (bullet the top 3 actions)",
+      "keywords": [
+        [
+          "triage"
+        ],
+        [
+          "owner"
+        ],
+        [
+          "flake"
+        ],
+        [
+          "priority"
+        ],
+        [
+          "smoke"
+        ],
+        [
+          "metric"
+        ],
+        [
+          "slo"
+        ],
+        [
+          "baselin"
+        ],
+        [
+          "critical"
+        ]
+      ],
+      "modelAnswer": "1) Define critical smoke + ownership map\n2) Measure flake rate / runtime hotspots\n3) Establish quality SLOs and a triage rotation",
+      "explanation": "Leadership starts with signal, ownership, and a thin trustworthy gate — not rewriting everything."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "question": "Which test pyramid layer should catch most SDK API contract regressions cheapest?",
+      "options": [
+        "Fast unit/component tests close to the API boundary",
+        "Only multi-rack hardware endurance runs",
+        "Manual exploratory testing once per year",
+        "Production customer tickets after GA"
+      ],
+      "correct": 0,
+      "explanation": "Shift-left: cheap deterministic tests should own contract regressions; HW labs catch what they uniquely can."
+    },
+    {
+      "id": 3,
+      "type": "code",
+      "language": "python",
+      "question": "Write a pytest test that asserts function add(2, 3) == 5. Include the import if needed.",
+      "starterCode": "from sdkmath import add\n\n",
+      "acceptedAnswers": [
+        "def test_add():\n    assert add(2, 3) == 5",
+        "def test_add_2_3():\n    assert add(2, 3) == 5"
+      ],
+      "answerPatterns": [
+        "def\\s+test_\\w+\\s*\\([^)]*\\)\\s*:[\\s\\S]*assert\\s+add\\(\\s*2\\s*,\\s*3\\s*\\)\\s*==\\s*5"
+      ],
+      "modelAnswer": "def test_add():\n    assert add(2, 3) == 5",
+      "explanation": "pytest discovers test_* functions and uses assert."
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "scenario": "A new SDK feature exposes async completion events. Bugs escape as “hangs” in customer clusters.",
+      "question": "Design a verification idea that would catch hangs (what oracle / technique)?",
+      "keywords": [
+        [
+          "timeout"
+        ],
+        [
+          "watchdog"
+        ],
+        [
+          "progress"
+        ],
+        [
+          "heartbeat"
+        ],
+        [
+          "deadlock"
+        ],
+        [
+          "invariant"
+        ],
+        [
+          "stress"
+        ]
+      ],
+      "modelAnswer": "Use timeouts/watchdogs plus progress oracles (event counts, heartbeat counters) under stress/concurrency — fail if no progress within bound.",
+      "explanation": "Hangs need liveness oracles, not only value assertions."
+    },
+    {
+      "id": 5,
+      "type": "text",
+      "question": "Differentiate verification vs validation in one crisp sentence each.",
+      "keywords": [
+        [
+          "spec"
+        ],
+        [
+          "requirement"
+        ],
+        [
+          "right product"
+        ],
+        [
+          "right system"
+        ],
+        [
+          "customer"
+        ],
+        [
+          "design"
+        ]
+      ],
+      "modelAnswer": "Verification: build the product right vs the spec/design. Validation: build the right product vs user/needs.",
+      "explanation": "Classic V&V wording — useful in manager interviews."
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "question": "What is a good property of a scalable automation framework?",
+      "options": [
+        "Stable APIs, parallel execution, clear fixtures, and actionable reporting",
+        "Hard-coded sleeps and absolute GUI coordinates everywhere",
+        "Single global mutable state shared by all tests",
+        "Password secrets committed into the repo for convenience"
+      ],
+      "correct": 0,
+      "explanation": "Scalable harnesses optimize for reuse, isolation, parallelism, and debuggability."
+    },
+    {
+      "id": 7,
+      "type": "code",
+      "language": "python",
+      "question": "Write a small Python helper `retry(fn, attempts=3)` that calls fn until it succeeds or attempts are exhausted (re-raise last exception).",
+      "starterCode": "def retry(fn, attempts=3):\n    ",
+      "acceptedAnswers": [
+        "last = None\nfor _ in range(attempts):\n    try:\n        return fn()\n    except Exception as e:\n        last = e\nraise last"
+      ],
+      "answerPatterns": [
+        "for[\\s\\S]*try[\\s\\S]*return\\s+fn\\(\\)[\\s\\S]*except[\\s\\S]*raise"
+      ],
+      "modelAnswer": "last = None\nfor _ in range(attempts):\n    try:\n        return fn()\n    except Exception as e:\n        last = e\nraise last",
+      "explanation": "Retries belong in helpers with limits — and should still surface failure."
+    },
+    {
+      "id": 8,
+      "type": "text",
+      "question": "A vendor proposes 100% line coverage as the only exit criterion. How do you respond as verification lead?",
+      "keywords": [
+        [
+          "risk"
+        ],
+        [
+          "mutation"
+        ],
+        [
+          "scenario"
+        ],
+        [
+          "require"
+        ],
+        [
+          "not enough"
+        ],
+        [
+          "insufficien"
+        ],
+        [
+          "behavior"
+        ],
+        [
+          "oracle"
+        ]
+      ],
+      "modelAnswer": "Coverage is necessary but not sufficient — pair with risk-based scenarios, negative tests, and oracles; coverage without meaningful asserts is theater.",
+      "explanation": "Managers must push back on vanity metrics."
+    },
+    {
+      "id": 9,
+      "type": "text",
+      "scenario": "API v2 must stay compatible with v1 clients for 12 months.",
+      "question": "Name two concrete automated checks you would add to protect compatibility.",
+      "keywords": [
+        [
+          "compat"
+        ],
+        [
+          "contract"
+        ],
+        [
+          "golden"
+        ],
+        [
+          "schema"
+        ],
+        [
+          "snapshot"
+        ],
+        [
+          "regress"
+        ],
+        [
+          "version"
+        ]
+      ],
+      "modelAnswer": "Contract/schema tests against recorded v1 client traces, and a compatibility suite that runs v1 clients against v2 in CI.",
+      "explanation": "Compatibility needs executable contracts, not wiki promises."
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "question": "When should a test write to a shared lab device without locking?",
+      "options": [
+        "Basically never — shared mutable hardware needs isolation or leases",
+        "Always — contention improves realism",
+        "Only on Mondays",
+        "When coverage is below 70%"
+      ],
+      "correct": 0,
+      "explanation": "HW-in-loop farms require leases/mutexes/namespaces or you get heisenbugs."
+    },
+    {
+      "id": 11,
+      "type": "code",
+      "language": "python",
+      "question": "Using pytest, write a fixture named `client` that yields an object SdkClient() and closes it afterward (use yield).",
+      "starterCode": "import pytest\nfrom sdk import SdkClient\n\n",
+      "acceptedAnswers": [
+        "@pytest.fixture\ndef client():\n    c = SdkClient()\n    yield c\n    c.close()"
+      ],
+      "answerPatterns": [
+        "@pytest\\.fixture[\\s\\S]*def\\s+client\\([\\s\\S]*yield[\\s\\S]*close\\("
+      ],
+      "modelAnswer": "@pytest.fixture\ndef client():\n    c = SdkClient()\n    yield c\n    c.close()",
+      "explanation": "yield fixtures setup/teardown cleanly — essential harness literacy."
+    },
+    {
+      "id": 12,
+      "type": "text",
+      "question": "Invent a severity rubric line for a bug that corrupts data rarely but silently. What severity and why?",
+      "keywords": [
+        [
+          "critical"
+        ],
+        [
+          "blocker"
+        ],
+        [
+          "high"
+        ],
+        [
+          "silent"
+        ],
+        [
+          "corrupt"
+        ]
+      ],
+      "modelAnswer": "High/Critical — silent data corruption undermines trust even if rare; prioritize detectability and fixes.",
+      "explanation": "Silent corruption beats loud crashes in severity conversations."
+    }
+  ],
+  "followUpQuestions": [
+    {
+      "type": "text",
+      "question": "Verification asks: did we build the product ____?",
+      "acceptedAnswers": [
+        "right",
+        "correctly",
+        "to spec",
+        "according to spec"
+      ],
+      "explanation": "Verification ≈ build it right / to spec."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "question": "Minimal pytest assert that 1 + 1 equals 2 inside test_math.",
+      "acceptedAnswers": [
+        "def test_math():\n    assert 1 + 1 == 2"
+      ],
+      "answerPatterns": [
+        "def\\s+test_math\\s*\\(.*\\)\\s*:[\\s\\S]*assert\\s+1\\s*\\+\\s*1\\s*==\\s*2"
+      ],
+      "explanation": "pytest uses plain assert."
+    },
+    {
+      "type": "mcq",
+      "question": "Best place for most API contract tests?",
+      "options": [
+        "Fast automated tests near the API",
+        "Only after customer GA",
+        "Only manual checklist",
+        "Only multi-week soak on rare hardware"
+      ],
+      "correct": 0,
+      "explanation": "Shift-left contract testing."
+    },
+    {
+      "type": "text",
+      "question": "Name one oracle useful for detecting hangs.",
+      "keywords": [
+        [
+          "timeout"
+        ],
+        [
+          "watchdog"
+        ],
+        [
+          "progress"
+        ],
+        [
+          "heartbeat"
+        ]
+      ],
+      "explanation": "Liveness needs timeouts/progress checks."
+    },
+    {
+      "type": "text",
+      "question": "Why is line coverage alone a weak exit criterion?",
+      "keywords": [
+        [
+          "assert"
+        ],
+        [
+          "behavior"
+        ],
+        [
+          "oracle"
+        ],
+        [
+          "insufficien"
+        ],
+        [
+          "not enough"
+        ],
+        [
+          "quality"
+        ]
+      ],
+      "explanation": "Executed lines ≠ correct behavior."
+    }
+  ],
+  "documentation": "<h3>SDK Verification & Automation</h3>\n<p>Think like a manager-engineer: strategy, oracles, harness quality, and honest metrics.</p>\n<ul>\n<li>Risk-based prioritization and smoke gates</li>\n<li>Unit/component vs HW-in-loop balance</li>\n<li>pytest fixtures, retries with limits, parallel isolation</li>\n<li>Compatibility contracts and actionable reports</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Verification vs validation, and a trustworthy smoke</li>\n<li><strong>Advanced:</strong> Oracles, fixtures, retries with limits</li>\n<li><strong>Expert:</strong> Compatibility contracts &amp; severity judgment</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://docs.pytest.org/\" target=\"_blank\" rel=\"noopener noreferrer\">pytest documentation</a> — Fixtures, parametrization, and plugins — the harness standard.</li><li><a href=\"https://testing.googleblog.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Google Testing Blog</a> — Free essays on testability, flakiness, and engineering culture.</li><li><a href=\"https://www.ministryoftesting.com/articles\" target=\"_blank\" rel=\"noopener noreferrer\">Ministry of Testing (free articles)</a> — Practical software testing community content.</li></ul>",
+  "tutorial": {
+    "intro": "Think like a verification leader: oracles, risk-based coverage, harness craft, and metrics that measure trust.",
+    "levels": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "badge": "🌱",
+        "minutes": 22,
+        "tagline": "Verification vs validation, and a trustworthy smoke",
+        "html": "\n<ul>\n<li><strong>Verification:</strong> build the product <em>right</em> (vs spec/design).</li>\n<li><strong>Validation:</strong> build the <em>right</em> product (vs user need).</li>\n<li><strong>Smoke gate:</strong> small, owned, deterministic, merge-blocking.</li>\n</ul>\n<pre>def test_add():\n    assert add(2, 3) == 5</pre>\n<div class=\"tutorial-callout tip\"><strong>First 30 days</strong><p>Map owners, measure flake/runtime, define critical smoke — before rewriting 8,000 tests.</p></div>\n\n<h4>Good test names &amp; failure messages</h4>\n<pre>def test_connect_times_out_when_peer_down():\n    with pytest.raises(TimeoutError):\n        client.connect(peer_down, timeout_s=1)</pre>\n<p>Failures should say <em>what invariant broke</em>, not only “assert False”.</p><h4>Oracle examples</h4>\n<ul>\n<li>Value oracle: return code / payload equals golden</li>\n<li>Metamorphic: shuffle inputs → same result</li>\n<li>Liveness: events increase within T seconds</li>\n<li>Safety: never observe duplicate commit IDs</li>\n</ul>"
+      },
+      {
+        "id": "advanced",
+        "title": "Advanced",
+        "badge": "🚀",
+        "minutes": 26,
+        "tagline": "Oracles, fixtures, retries with limits",
+        "html": "\n<ul>\n<li><strong>Hangs</strong> need liveness oracles: timeouts, heartbeats, progress counters.</li>\n<li><strong>pytest fixtures</strong> with <code>yield</code> for setup/teardown.</li>\n<li><strong>Retries</strong> belong in helpers with caps — still fail loudly.</li>\n<li><strong>HW farms</strong> need locks/leases; shared mutable devices without isolation = heisenbugs.</li>\n</ul>\n<div class=\"tutorial-callout pitfall\"><strong>Vanity metric</strong><p>100% line coverage with weak asserts is theater. Demand behavioral oracles.</p></div>\n\n<h4>Parametrize &amp; properties</h4>\n<ul>\n<li>Parametrize across MTU, offloads, protocols.</li>\n<li>Property ideas: idempotent reconnect, monotonic sequence numbers, conservation of messages.</li>\n<li>Separate deterministic unit tests from lab jobs in CI graph.</li>\n</ul><h4>Flake taxonomy</h4>\n<ul>\n<li>Env drift · resource races · timing · order dependence · external deps</li>\n<li>Each flake gets: owner, quarantine issue, fix/delete deadline</li>\n</ul>"
+      },
+      {
+        "id": "expert",
+        "title": "Expert",
+        "badge": "🏆",
+        "minutes": 24,
+        "tagline": "Compatibility contracts &amp; severity judgment",
+        "html": "\n<ul>\n<li>Contract/schema tests + old clients against new SDK in CI.</li>\n<li>Silent data corruption ⇒ high/critical even if rare.</li>\n<li>Scale metrics: wall time, flake %, parallel efficiency, MTTR, ownership %.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Pushback line</strong><p>“Coverage is necessary but not sufficient — here’s the risk-based scenario set that actually protects customers.”</p></div>\n\n<h4>Org-level automation architecture</h4>\n<ul>\n<li>Layer: libraries → product suites → lab schedules → dashboards</li>\n<li>Stable internal APIs for lab allocation</li>\n<li>Quality council: escape defect review weekly → new tests with owners</li>\n</ul><h4>Dashboards leadership wants</h4>\n<ul>\n<li>Merge gate health (pass rate, duration)</li>\n<li>Top failing tests by product area</li>\n<li>Escape defects linked to missing coverage</li>\n<li>Lab utilization / queue time</li>\n</ul>"
+      }
+    ],
+    "resources": [
+      {
+        "title": "pytest documentation",
+        "url": "https://docs.pytest.org/",
+        "source": "pytest",
+        "note": "Fixtures, parametrization, and plugins — the harness standard."
+      },
+      {
+        "title": "Google Testing Blog",
+        "url": "https://testing.googleblog.com/",
+        "source": "Google",
+        "note": "Free essays on testability, flakiness, and engineering culture."
+      },
+      {
+        "title": "Ministry of Testing (free articles)",
+        "url": "https://www.ministryoftesting.com/articles",
+        "source": "MoT",
+        "note": "Practical software testing community content."
+      },
+      {
+        "title": "Martin Fowler — Test Pyramid",
+        "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+        "source": "Martin Fowler",
+        "note": "Classic free framing for where tests should live."
+      },
+      {
+        "title": "OWASP Wrangling WebSocket / general quality ideas",
+        "url": "https://owasp.org/www-project-web-security-testing-guide/",
+        "source": "OWASP",
+        "note": "Free testing mindset for adversarial/negative cases."
+      }
+    ]
+  }
+}

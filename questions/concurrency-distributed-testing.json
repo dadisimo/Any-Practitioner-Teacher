@@ -1,0 +1,401 @@
+{
+  "id": "concurrency-distributed-testing",
+  "title": "Concurrency & Multi-Node Testing",
+  "icon": "🧵",
+  "description": "Races, deadlocks, distributed failure modes, and how to test them in SDK labs",
+  "questions": [
+    {
+      "id": 1,
+      "type": "text",
+      "scenario": "A C++ SDK call graph shares a connection pool. Stress tests pass with 2 threads and fail with 64 threads with corrupted headers — only on release builds.",
+      "question": "What class of bug is most likely, and what is your first instrumentation idea?",
+      "keywords": [
+        [
+          "race"
+        ],
+        [
+          "data race"
+        ],
+        [
+          "thread"
+        ],
+        [
+          "tsan"
+        ],
+        [
+          "synchron"
+        ],
+        [
+          "mutex"
+        ],
+        [
+          "atomic"
+        ]
+      ],
+      "modelAnswer": "Data race / missing synchronization — run under ThreadSanitizer (or add targeted locking assertions) and stress with more threads/cores.",
+      "explanation": "Release-only corruption under concurrency screams races; TSAN and targeted sync checks are the usual first moves."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "question": "What does a data race mean?",
+      "options": [
+        "Concurrent conflicting accesses to a memory location with no happens-before relation",
+        "Two Jenkins agents picking the same label",
+        "A TCP retransmission after packet loss",
+        "A Docker layer failing to compress"
+      ],
+      "correct": 0,
+      "explanation": "Data races are undefined behavior in C/C++ and a top concurrency defect class."
+    },
+    {
+      "id": 3,
+      "type": "code",
+      "language": "python",
+      "question": "Complete this function so two threads increment counter 100000 times each safely using a Lock. Return the counter.",
+      "starterCode": "import threading\n\ndef run():\n    counter = 0\n    lock = threading.Lock()\n    def worker():\n        nonlocal counter\n        for _ in range(100000):\n            # your critical section\n",
+      "acceptedAnswers": [
+        "with lock:\n                counter += 1"
+      ],
+      "answerPatterns": [
+        "(with\\s+lock\\s*:|lock\\.acquire\\([\\s\\S]*counter\\s*\\+=\\s*1[\\s\\S]*lock\\.release)"
+      ],
+      "modelAnswer": "with lock:\n    counter += 1",
+      "explanation": "The increment must be atomic w.r.t. other threads — a Lock (or atomic) protects the critical section."
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "question": "Thread A holds lock L1 and waits for L2. Thread B holds L2 and waits for L1. Name the bug and one prevention strategy.",
+      "keywords": [
+        [
+          "deadlock"
+        ],
+        [
+          "order"
+        ],
+        [
+          "lock order"
+        ],
+        [
+          "hierarchy"
+        ]
+      ],
+      "modelAnswer": "Deadlock — impose a global lock ordering (always acquire L1 before L2) or use try-lock with backoff.",
+      "explanation": "Classic circular wait; ordering breaks the cycle."
+    },
+    {
+      "id": 5,
+      "type": "text",
+      "scenario": "Multi-node test: Node1 sends messages to Node2. Randomly, Node2 drops for 30s then returns. The SDK sometimes never recovers subscriptions.",
+      "question": "What failure mode should your test inject, and what recovery property should you assert?",
+      "keywords": [
+        [
+          "partit"
+        ],
+        [
+          "disconnect"
+        ],
+        [
+          "failover"
+        ],
+        [
+          "reconnect"
+        ],
+        [
+          "timeout"
+        ],
+        [
+          "resubscrib"
+        ],
+        [
+          "availability"
+        ]
+      ],
+      "modelAnswer": "Inject network partition/disconnect; assert reconnect/resubscribe within a bound and no stuck “half-open” state.",
+      "explanation": "Distributed SDKs must be tested under partitions — recovery liveness is the product requirement."
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "question": "Why are sleeps (time.sleep(2)) a weak synchronization strategy in tests?",
+      "options": [
+        "They are timing-dependent, slow, and still race on loaded CI machines",
+        "They always deadlock the kernel scheduler",
+        "They increase NIC MTU unpredictably",
+        "They are forbidden by the Python language grammar"
+      ],
+      "correct": 0,
+      "explanation": "Prefer condition variables, polling with timeout on a state oracle, or deterministic schedules."
+    },
+    {
+      "id": 7,
+      "type": "code",
+      "language": "cpp",
+      "question": "In C++, which header/facility is commonly used for a mutual-exclusion lock? Write an include and a std::mutex variable named m.",
+      "acceptedAnswers": [
+        "#include <mutex>\nstd::mutex m;",
+        "#include <mutex>\nstd::mutex m"
+      ],
+      "answerPatterns": [
+        "#include\\s*<mutex>[\\s\\S]*std::mutex\\s+m"
+      ],
+      "modelAnswer": "#include <mutex>\nstd::mutex m;",
+      "explanation": "std::mutex from <mutex> is the standard exclusive lock primitive."
+    },
+    {
+      "id": 8,
+      "type": "text",
+      "question": "Define “heisenbug” in the context of concurrent SDK testing.",
+      "keywords": [
+        [
+          "observ"
+        ],
+        [
+          "disappear"
+        ],
+        [
+          "race"
+        ],
+        [
+          "timing"
+        ],
+        [
+          "debug"
+        ]
+      ],
+      "modelAnswer": "A bug that changes or disappears when observed (logging/debugger), often timing/race related.",
+      "explanation": "Heisenbugs dominate concurrency labs — prefer low-overhead detectors (TSAN) and record/replay."
+    },
+    {
+      "id": 9,
+      "type": "text",
+      "scenario": "Performance validation across 16 nodes shows p99 latency spikes only when all nodes start traffic in the same millisecond.",
+      "question": "What test-harness change would better reveal (or avoid) synchronized thundering-herd artifacts?",
+      "keywords": [
+        [
+          "jitter"
+        ],
+        [
+          "stagger"
+        ],
+        [
+          "ramp"
+        ],
+        [
+          "random"
+        ],
+        [
+          "offset"
+        ],
+        [
+          "warmup"
+        ]
+      ],
+      "modelAnswer": "Stagger/ramp start times with jitter and include warm-up; also measure under both synchronized and staggered patterns intentionally.",
+      "explanation": "Multi-node tests must control arrival processes — herds can amplify control-plane storms."
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "question": "ThreadSanitizer (TSan) is primarily designed to find…",
+      "options": [
+        "Data races in native multithreaded code",
+        "CSS layout bugs in web UIs",
+        "BGP route leaks between autonomous systems",
+        "Dockerfile layer cache misses"
+      ],
+      "correct": 0,
+      "explanation": "TSan is a dynamic race detector for C/C++ (and similar) binaries."
+    },
+    {
+      "id": 11,
+      "type": "code",
+      "language": "python",
+      "question": "Using concurrent.futures, write code that runs work(i) for i in 0..3 in a thread pool and collects results into a list named results.",
+      "starterCode": "from concurrent.futures import ThreadPoolExecutor, as_completed\n\n",
+      "acceptedAnswers": [
+        "with ThreadPoolExecutor() as ex:\n    futs = [ex.submit(work, i) for i in range(4)]\n    results = [f.result() for f in futs]"
+      ],
+      "answerPatterns": [
+        "ThreadPoolExecutor[\\s\\S]*(submit|map)[\\s\\S]*work"
+      ],
+      "modelAnswer": "with ThreadPoolExecutor() as ex:\n    results = list(ex.map(work, range(4)))",
+      "explanation": "Thread pools are a practical way to generate concurrency in Python harnesses."
+    },
+    {
+      "id": 12,
+      "type": "text",
+      "question": "Give one invariant you could assert in a multi-producer multi-consumer queue test.",
+      "keywords": [
+        [
+          "order"
+        ],
+        [
+          "count"
+        ],
+        [
+          "lost"
+        ],
+        [
+          "duplicate"
+        ],
+        [
+          "empty"
+        ],
+        [
+          "conserv"
+        ],
+        [
+          "sum"
+        ]
+      ],
+      "modelAnswer": "e.g. every enqueued item is dequeued exactly once (no loss/duplication); or sum(in)==sum(out).",
+      "explanation": "Conservation/ordering oracles catch subtle concurrency bugs better than spot checks."
+    }
+  ],
+  "followUpQuestions": [
+    {
+      "type": "text",
+      "question": "Circular lock wait is called a…",
+      "acceptedAnswers": [
+        "deadlock"
+      ],
+      "explanation": "Deadlock: circular wait on locks/resources."
+    },
+    {
+      "type": "mcq",
+      "question": "TSan detects…",
+      "options": [
+        "Data races",
+        "DNS typos only",
+        "CSS issues",
+        "YAML indentation only"
+      ],
+      "correct": 0,
+      "explanation": "ThreadSanitizer targets data races."
+    },
+    {
+      "type": "text",
+      "question": "Why are fixed sleeps brittle in concurrent tests?",
+      "keywords": [
+        [
+          "timing"
+        ],
+        [
+          "race"
+        ],
+        [
+          "flake"
+        ],
+        [
+          "load"
+        ],
+        [
+          "ci"
+        ]
+      ],
+      "explanation": "They encode timing assumptions that fail under load."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "question": "Import the standard Lock type from threading.",
+      "acceptedAnswers": [
+        "from threading import Lock",
+        "import threading  # use threading.Lock"
+      ],
+      "answerPatterns": [
+        "(from\\s+threading\\s+import\\s+Lock|import\\s+threading)"
+      ],
+      "explanation": "threading.Lock is the basic mutex."
+    },
+    {
+      "type": "text",
+      "question": "Name one multi-node failure you should inject on purpose.",
+      "keywords": [
+        [
+          "partit"
+        ],
+        [
+          "kill"
+        ],
+        [
+          "latency"
+        ],
+        [
+          "packet loss"
+        ],
+        [
+          "disconnect"
+        ],
+        [
+          "reboot"
+        ]
+      ],
+      "explanation": "Partitions, kills, latency, loss — chaos with assertions."
+    }
+  ],
+  "documentation": "<h3>Concurrency & Multi-Node Testing</h3>\n<p>Interview signal: you can name failure classes and design oracles, not only recite definitions.</p>\n<ul>\n<li>Data races, atomicity, lock ordering, deadlocks</li>\n<li>TSan / ASan and stress schedules</li>\n<li>Avoid sleep-based sync; assert progress/invariants</li>\n<li>Inject partitions, jitter starts, measure p99 carefully</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Races, locks, and why shared counters break</li>\n<li><strong>Advanced:</strong> Heisenbugs, TSan, and sleep-free sync</li>\n<li><strong>Expert:</strong> Partitions, thundering herds, p99 honesty</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual\" target=\"_blank\" rel=\"noopener noreferrer\">ThreadSanitizer wiki</a> — How to build/run TSan on C/C++.</li><li><a href=\"https://preshing.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Preshing on Programming — atomics &amp; locks</a> — Clear free deep-dives on memory ordering &amp; concurrency.</li><li><a href=\"https://docs.python.org/3/library/threading.html\" target=\"_blank\" rel=\"noopener noreferrer\">Python threading docs</a> — Locks, events, and primitives for harnesses.</li></ul>",
+  "tutorial": {
+    "intro": "From data races to multi-node partitions: name the failure class, then design an oracle that would catch it.",
+    "levels": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "badge": "🌱",
+        "minutes": 21,
+        "tagline": "Races, locks, and why shared counters break",
+        "html": "\n<ul>\n<li><strong>Data race:</strong> conflicting concurrent accesses without happens-before (UB in C++).</li>\n<li><strong>Critical section:</strong> protect with mutex/atomic.</li>\n<li><strong>Deadlock:</strong> circular wait — fix with global lock order.</li>\n</ul>\n<pre>with lock:\n    counter += 1</pre>\n<div class=\"tutorial-callout tip\"><strong>Remember</strong><p>Release-only corruption under stress ⇒ suspect races; try TSan.</p></div>\n\n<h4>Happens-before intuition</h4>\n<p>If thread A writes <code>x=1</code> and thread B reads <code>x</code> with no lock/atomic/join, you have a race. “I never saw it fail” is not proof.</p><h4>Lock rules of thumb</h4>\n<ul>\n<li>Hold locks briefly; never do network I/O under a global lock without eyes open</li>\n<li>Document lock order in headers for multi-lock code</li>\n<li>Prefer higher-level concurrent queues when they fit</li>\n</ul>\n<pre>// Pseudo lock order: always acquire A before B\nstd::lock(mutex_a, mutex_b); // C++17 avoids deadlock pair</pre>"
+      },
+      {
+        "id": "advanced",
+        "title": "Advanced",
+        "badge": "🚀",
+        "minutes": 24,
+        "tagline": "Heisenbugs, TSan, and sleep-free sync",
+        "html": "\n<ul>\n<li><strong>Heisenbug:</strong> changes when observed (logging/debugger timing).</li>\n<li><strong>TSan:</strong> dynamic detector for data races in native code.</li>\n<li>Prefer condition variables / state polling with timeout over <code>sleep(2)</code>.</li>\n<li>Invariants beat spot checks: every enqueue has exactly one dequeue.</li>\n</ul>\n<div class=\"tutorial-callout lab\"><strong>Drill</strong><p>Write an invariant for a multi-producer queue before you write the test threads.</p></div>\n\n<h4>Tools map</h4>\n<ul>\n<li>TSan for races; ASan for memory; UBSan for UB</li>\n<li>Helgrind (historical) / modern sanitizers preferred</li>\n<li>Record timestamps + thread IDs in harness logs when reproducing</li>\n</ul><h4>Reproducing races</h4>\n<ol>\n<li>Increase threads/cores; run under load</li>\n<li>Build with TSan; fix until clean</li>\n<li>Add invariant asserts in debug builds</li>\n<li>Only then consider timing logs (they perturb)</li>\n</ol>\n<div class=\"tutorial-callout pitfall\"><strong>Pitfall</strong>Shipping with “retry until pass” in CI for race tests teaches the suite to lie.</div>"
+      },
+      {
+        "id": "expert",
+        "title": "Expert",
+        "badge": "🏆",
+        "minutes": 26,
+        "tagline": "Partitions, thundering herds, p99 honesty",
+        "html": "\n<ul>\n<li>Inject disconnect/partition; assert reconnect/resubscribe bounds.</li>\n<li>Stagger multi-node starts with jitter — herds amplify control-plane storms.</li>\n<li>Publish p99/p999 with pinned CPUs; averages hide pain.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Experienced line</strong><p>“We chaos-test recovery paths and treat liveness as a first-class assertion, not a hopeful log line.”</p></div>\n\n<h4>Distributed assertions</h4>\n<ul>\n<li>Linearizability vs eventual consistency — know which your SDK claims</li>\n<li>Clock skew: don’t assert global time order without sync assumptions</li>\n<li>Failover tests: kill leader; prove clients recover within SLO</li>\n</ul><h4>Multi-node lab patterns</h4>\n<ul>\n<li>Orchestrator starts roles with intentional delays/jitter</li>\n<li>Fault script: SIGKILL, NIC flap, 30s partition, clock step</li>\n<li>Pass criteria: recovery SLO + no duplicate irreversible side effects</li>\n<li>Capture per-node logs into one CI artifact bundle</li>\n</ul>"
+      }
+    ],
+    "resources": [
+      {
+        "title": "ThreadSanitizer wiki",
+        "url": "https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual",
+        "source": "Google Sanitizers",
+        "note": "How to build/run TSan on C/C++."
+      },
+      {
+        "title": "Preshing on Programming — atomics &amp; locks",
+        "url": "https://preshing.com/",
+        "source": "Preshing",
+        "note": "Clear free deep-dives on memory ordering &amp; concurrency."
+      },
+      {
+        "title": "Python threading docs",
+        "url": "https://docs.python.org/3/library/threading.html",
+        "source": "Python.org",
+        "note": "Locks, events, and primitives for harnesses."
+      },
+      {
+        "title": "Jepsen.io analyses",
+        "url": "https://jepsen.io/analyses",
+        "source": "Jepsen",
+        "note": "World-class free distributed-systems failure narratives."
+      },
+      {
+        "title": "Awesome Chaos Engineering (lists free tools)",
+        "url": "https://github.com/dastergon/awesome-chaos-engineering",
+        "source": "Community",
+        "note": "Curated free chaos/fault-injection resources."
+      }
+    ]
+  }
+}

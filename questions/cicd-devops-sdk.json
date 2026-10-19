@@ -1,0 +1,404 @@
+{
+  "id": "cicd-devops-sdk",
+  "title": "CI/CD & DevOps for SDKs",
+  "icon": "🔁",
+  "description": "Jenkins, Git, Gerrit, Docker — release pipelines and automation thinking for SDK verification",
+  "questions": [
+    {
+      "id": 1,
+      "type": "text",
+      "scenario": "Your SDK verification suite is flaky in Jenkins only on shared agents. Locally it is stable. Artifacts show different NIC driver versions across agents.",
+      "question": "Propose a pipeline design change that attacks the root cause (2–3 sentences).",
+      "keywords": [
+        [
+          "docker"
+        ],
+        [
+          "image"
+        ],
+        [
+          "pin"
+        ],
+        [
+          "agent"
+        ],
+        [
+          "matrix"
+        ],
+        [
+          "container"
+        ],
+        [
+          "version"
+        ]
+      ],
+      "modelAnswer": "Pin a golden container/image (or labeled agent pool) with locked driver/toolchain versions; run the suite in that reproducible environment and fail the job if host/driver drift is detected.",
+      "explanation": "CI flakes from environment drift are fixed by immutability: containers, labels, version gates — not by retrying forever."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "question": "In Gerrit-centric workflows, what is a Change-Id primarily used for?",
+      "options": [
+        "Linking patch sets of the same logical review across revisions",
+        "Encrypting Git objects at rest on the server",
+        "Selecting which Jenkins agent label executes a job",
+        "Tagging Docker layers for multi-arch manifests"
+      ],
+      "correct": 0,
+      "explanation": "Gerrit Change-Id ties amended commits/patch sets to one reviewable change."
+    },
+    {
+      "id": 3,
+      "type": "code",
+      "language": "bash",
+      "question": "Write a git command to create a new branch named sdk-verify-fix from the current HEAD.",
+      "acceptedAnswers": [
+        "git checkout -b sdk-verify-fix",
+        "git switch -c sdk-verify-fix",
+        "git branch sdk-verify-fix && git checkout sdk-verify-fix"
+      ],
+      "answerPatterns": [
+        "git\\s+(checkout\\s+-b|switch\\s+-c)\\s+sdk-verify-fix"
+      ],
+      "modelAnswer": "git switch -c sdk-verify-fix   # or git checkout -b sdk-verify-fix",
+      "explanation": "Either modern switch -c or classic checkout -b creates and checks out the branch."
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "question": "Name THREE stages you would put in a CI pipeline for an SDK release candidate (ordered).",
+      "keywords": [
+        [
+          "build"
+        ],
+        [
+          "test"
+        ],
+        [
+          "pack"
+        ],
+        [
+          "publish"
+        ],
+        [
+          "lint"
+        ],
+        [
+          "static"
+        ],
+        [
+          "sign"
+        ]
+      ],
+      "answerPatterns": [
+        "(build|compile).*(test|verify|check)|(lint|static).*(test)"
+      ],
+      "modelAnswer": "e.g. lint/static analysis → build → unit/integration/HW-in-loop tests → package/sign → publish artifacts",
+      "explanation": "Leaders expect a clear quality gate order before artifacts leave the factory."
+    },
+    {
+      "id": 5,
+      "type": "code",
+      "language": "dockerfile",
+      "question": "Write a minimal Dockerfile that starts FROM ubuntu:22.04, installs python3 and pip noninteractively, and sets WORKDIR to /workspace.",
+      "acceptedAnswers": [
+        "FROM ubuntu:22.04\nRUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace"
+      ],
+      "answerPatterns": [
+        "FROM\\s+ubuntu:22\\.04[\\s\\S]*RUN[\\s\\S]*python3[\\s\\S]*WORKDIR\\s+/workspace"
+      ],
+      "modelAnswer": "FROM ubuntu:22.04\nRUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace",
+      "explanation": "Pin base image, noninteractive apt, install tools, set workdir — CI image basics."
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "question": "What is a healthy approach to flaky tests in a release-blocking Jenkins pipeline?",
+      "options": [
+        "Quarantine/fix root cause with ownership; avoid silent infinite retries that greenwash failures",
+        "Increase retries to 50 so the board always stays green",
+        "Delete assertions until the job passes",
+        "Disable the pipeline on Fridays only"
+      ],
+      "correct": 0,
+      "explanation": "Managers are judged on signal quality. Retries without triage hide product risk."
+    },
+    {
+      "id": 7,
+      "type": "text",
+      "question": "Explain in one sentence how Docker helps SDK verification reproducibility.",
+      "keywords": [
+        [
+          "environ"
+        ],
+        [
+          "depend"
+        ],
+        [
+          "isolat"
+        ],
+        [
+          "image"
+        ],
+        [
+          "same"
+        ]
+      ],
+      "modelAnswer": "Containers freeze toolchain/OS dependencies so tests run in the same environment across laptops and CI agents.",
+      "explanation": "Reproducibility is the product; Docker is a packaging mechanism for that."
+    },
+    {
+      "id": 8,
+      "type": "code",
+      "language": "bash",
+      "question": "Write a docker command to run image sdk-verify:1.2 interactively with the current directory mounted at /workspace.",
+      "acceptedAnswers": [
+        "docker run -it -v \"$PWD\":/workspace sdk-verify:1.2",
+        "docker run -it -v $(pwd):/workspace sdk-verify:1.2",
+        "docker run --rm -it -v $PWD:/workspace sdk-verify:1.2"
+      ],
+      "answerPatterns": [
+        "docker\\s+run(?=.*-it)(?=.*-v)(?=.*sdk-verify:1\\.2)"
+      ],
+      "modelAnswer": "docker run --rm -it -v \"$PWD\":/workspace sdk-verify:1.2",
+      "explanation": "Interactive run + bind mount is the everyday developer loop for containerized suites."
+    },
+    {
+      "id": 9,
+      "type": "text",
+      "scenario": "Firmware, driver, and SDK teams share one nightly. A late firmware drop broke 40% of SDK tests after merge.",
+      "question": "As verification manager, what gating policy would you propose between those components?",
+      "keywords": [
+        [
+          "compat"
+        ],
+        [
+          "matrix"
+        ],
+        [
+          "gate"
+        ],
+        [
+          "version"
+        ],
+        [
+          "contract"
+        ],
+        [
+          "integrat"
+        ],
+        [
+          "promote"
+        ]
+      ],
+      "modelAnswer": "Require a compatibility matrix / integration gate: SDK promote only against signed firmware+driver pairs that passed a joint smoke suite; block nightlies from mixing unpromoted drops.",
+      "explanation": "Cross-team HW/SW orgs need explicit promotion contracts, not hope."
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "question": "What does a Jenkins agent label typically control?",
+      "options": [
+        "Which machines/capabilities are eligible to execute a job",
+        "The semantic version of the Git commit message",
+        "Whether Gerrit requires Code-Review +2",
+        "The MTU of the Docker bridge network"
+      ],
+      "correct": 0,
+      "explanation": "Labels route jobs to hardware pools (e.g., gpu, nic-lab, x86)."
+    },
+    {
+      "id": 11,
+      "type": "text",
+      "question": "Write a short checklist (3 bullets in one answer) for making an SDK CI job “merge-blocking ready”.",
+      "keywords": [
+        [
+          "determin"
+        ],
+        [
+          "artifact"
+        ],
+        [
+          "timeout"
+        ],
+        [
+          "flake"
+        ],
+        [
+          "gate"
+        ],
+        [
+          "report"
+        ],
+        [
+          "owner"
+        ]
+      ],
+      "modelAnswer": "- Deterministic environment\n- Clear pass/fail artifacts & logs\n- Timeouts + flake policy with owners",
+      "explanation": "Merge gates need reliability, observability, and ownership — not just a shell script."
+    },
+    {
+      "id": 12,
+      "type": "code",
+      "language": "groovy",
+      "question": "In a Jenkins declarative pipeline, write a tiny skeleton with agent any and one stage named Verify that runs sh \"pytest -q\".",
+      "starterCode": "pipeline {\n",
+      "acceptedAnswers": [
+        "pipeline {\n  agent any\n  stages {\n    stage(\"Verify\") {\n      steps {\n        sh \"pytest -q\"\n      }\n    }\n  }\n}"
+      ],
+      "answerPatterns": [
+        "pipeline\\s*\\{[\\s\\S]*agent\\s+any[\\s\\S]*stage\\([\"']Verify[\"']\\)[\\s\\S]*pytest"
+      ],
+      "modelAnswer": "pipeline {\n  agent any\n  stages {\n    stage(\"Verify\") {\n      steps { sh \"pytest -q\" }\n    }\n  }\n}",
+      "explanation": "Declarative pipelines need agent + stages + steps — enough to discuss in interviews."
+    }
+  ],
+  "followUpQuestions": [
+    {
+      "type": "text",
+      "question": "What Gerrit field links patch sets of one logical change?",
+      "acceptedAnswers": [
+        "change-id",
+        "change id",
+        "changeid"
+      ],
+      "explanation": "Change-Id correlates patch sets."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "question": "Git command to show the last commit message?",
+      "acceptedAnswers": [
+        "git log -1",
+        "git log -1 --pretty=%B",
+        "git show -s --format=%B"
+      ],
+      "answerPatterns": [
+        "git\\s+(log\\s+-1|show)"
+      ],
+      "explanation": "git log -1 or git show reads the tip commit."
+    },
+    {
+      "type": "mcq",
+      "question": "Docker primarily improves CI by…",
+      "options": [
+        "Packaging a reproducible runtime for builds/tests",
+        "Replacing the need for any test assertions",
+        "Automatically writing Gerrit review comments",
+        "Increasing NIC line rate in hardware"
+      ],
+      "correct": 0,
+      "explanation": "Reproducible environments are the point."
+    },
+    {
+      "type": "text",
+      "question": "Name one danger of retrying failed CI tests without triage.",
+      "keywords": [
+        [
+          "mask"
+        ],
+        [
+          "hide"
+        ],
+        [
+          "flake"
+        ],
+        [
+          "signal"
+        ],
+        [
+          "greenwash"
+        ],
+        [
+          "miss"
+        ]
+      ],
+      "explanation": "Retries can mask real regressions and destroy signal."
+    },
+    {
+      "type": "text",
+      "question": "What do Jenkins labels select?",
+      "keywords": [
+        [
+          "agent"
+        ],
+        [
+          "node"
+        ],
+        [
+          "executor"
+        ],
+        [
+          "machine"
+        ],
+        [
+          "pool"
+        ]
+      ],
+      "explanation": "Labels select which agents can run the job."
+    }
+  ],
+  "documentation": "<h3>CI/CD & DevOps for SDK Verification</h3>\n<p>Focus on <strong>signal quality</strong>, reproducible environments, and cross-component gates.</p>\n<ul>\n<li><strong>Git/Gerrit:</strong> reviews, Change-Id, patch sets</li>\n<li><strong>Jenkins:</strong> agents/labels, declarative pipelines, artifacts</li>\n<li><strong>Docker:</strong> golden images, mounts, version pins</li>\n<li><strong>Policy:</strong> flake quarantine, promotion matrices, merge blockers</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Git → build → test → package</li>\n<li><strong>Advanced:</strong> Jenkins agents, Docker pins, flake policy</li>\n<li><strong>Expert:</strong> Promotion matrices across FW/driver/SDK</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://docs.docker.com/get-started/\" target=\"_blank\" rel=\"noopener noreferrer\">Docker Get Started</a> — Official free intro to images, containers, and volumes.</li><li><a href=\"https://www.jenkins.io/doc/book/pipeline/\" target=\"_blank\" rel=\"noopener noreferrer\">Jenkins Pipeline documentation</a> — Declarative pipelines &amp; agents from the source.</li><li><a href=\"https://git-scm.com/book/en/v2\" target=\"_blank\" rel=\"noopener noreferrer\">Pro Git book</a> — The free classic for branching, rebasing, and collaboration.</li></ul>",
+  "tutorial": {
+    "intro": "Treat CI as a product: reproducible environments, honest gates, and cross-component promotion — not a red dashboard you ignore.",
+    "levels": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "badge": "🌱",
+        "minutes": 21,
+        "tagline": "Git → build → test → package",
+        "html": "\n<ol>\n<li><strong>Build</strong> the SDK artifacts</li>\n<li><strong>Test</strong> fast checks on every change</li>\n<li><strong>Package/sign</strong> release candidates</li>\n<li><strong>Publish</strong> only after gates pass</li>\n</ol>\n<pre>git switch -c sdk-verify-fix\ndocker run --rm -it -v \"$PWD\":/workspace sdk-verify:1.2</pre>\n<div class=\"tutorial-callout tip\"><strong>Gerrit tip</strong><p><strong>Change-Id</strong> ties patch sets of one logical review together.</p></div>\n\n<h4>Artifact mindset</h4>\n<p>Every job should produce: logs, junit/xml, binary hashes, environment fingerprint (kernel, driver, image digest).</p>\n<ul class=\"checklist\"><li>Can you re-run the exact same bits next month?</li><li>Can a stranger debug from CI artifacts alone?</li></ul><h4>Dockerfile hygiene</h4>\n<pre>FROM ubuntu:22.04\nENV DEBIAN_FRONTEND=noninteractive\nRUN apt-get update && apt-get install -y python3 python3-pip \\\n && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace</pre>\n<p>Pin digests in production pipelines when possible.</p>"
+      },
+      {
+        "id": "advanced",
+        "title": "Advanced",
+        "badge": "🚀",
+        "minutes": 26,
+        "tagline": "Jenkins agents, Docker pins, flake policy",
+        "html": "\n<ul>\n<li><strong>Agent labels:</strong> route jobs to NIC/GPU lab pools.</li>\n<li><strong>Golden images:</strong> freeze toolchain/driver versions — kill “works on agent 3.”</li>\n<li><strong>Flakes:</strong> quarantine with owners; don’t infinite-retry into a fake green.</li>\n</ul>\n<pre>pipeline {\n  agent any\n  stages {\n    stage('Verify') {\n      steps { sh 'pytest -q' }\n    }\n  }\n}</pre>\n<div class=\"tutorial-callout pitfall\"><strong>Anti-pattern</strong><p>Marking the whole pipeline optional because it is red destroys organizational trust.</p></div>\n\n<h4>Branching &amp; review flow (Gerrit-style)</h4>\n<ol>\n<li>Local commits with Change-Id footer</li>\n<li>Push for review → patch sets iterate</li>\n<li>Verifiers (+1) / code owners (+2)</li>\n<li>Submit merges only when CI labels allow</li>\n</ol>\n<p>Map this to GitHub PRs if needed — the quality idea is the same: <strong>gated integration</strong>.</p><h4>Caching without lies</h4>\n<ul>\n<li>Cache dependencies, not test results that must be fresh</li>\n<li>Invalidate on lockfile changes</li>\n<li>Separate “build image” job from “run suite” job</li>\n</ul>"
+      },
+      {
+        "id": "expert",
+        "title": "Expert",
+        "badge": "🏆",
+        "minutes": 24,
+        "tagline": "Promotion matrices across FW/driver/SDK",
+        "html": "\n<p>In HW/SW orgs, <strong>compatibility is a release artifact</strong>.</p>\n<ul>\n<li>Promote firmware+driver pairs that passed joint smoke.</li>\n<li>SDK signs off only against promoted pairs.</li>\n<li>Nightlies must not silently mix unpromoted drops.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Manager answer</strong><p>“I’d publish a compatibility matrix and a merge-blocking smoke on golden agents; nightlies expand coverage without lying about gate health.”</p></div>\n\n<h4>Operating a verification CI org</h4>\n<ul>\n<li>SLO: flake rate &lt; X%, merge gate p95 runtime &lt; Y minutes</li>\n<li>Error budgets for infra vs product failures</li>\n<li>Cost control: shard, cache, and retire redundant suites</li>\n<li>Security: no secrets in repos; short-lived tokens in Jenkins credentials</li>\n</ul><h4>Cross-team contract example</h4>\n<pre>SDK nightly consumes:\n  driver_version >= X (promoted)\n  fw_bundle = promoted/latest-stable\nFail closed if fingerprint mismatches.</pre>"
+      }
+    ],
+    "resources": [
+      {
+        "title": "Docker Get Started",
+        "url": "https://docs.docker.com/get-started/",
+        "source": "Docker Docs",
+        "note": "Official free intro to images, containers, and volumes."
+      },
+      {
+        "title": "Jenkins Pipeline documentation",
+        "url": "https://www.jenkins.io/doc/book/pipeline/",
+        "source": "Jenkins",
+        "note": "Declarative pipelines &amp; agents from the source."
+      },
+      {
+        "title": "Pro Git book",
+        "url": "https://git-scm.com/book/en/v2",
+        "source": "git-scm",
+        "note": "The free classic for branching, rebasing, and collaboration."
+      },
+      {
+        "title": "Gerrit documentation",
+        "url": "https://gerrit-review.googlesource.com/Documentation/",
+        "source": "Gerrit",
+        "note": "Change-Ids, reviews, and submit requirements."
+      },
+      {
+        "title": "GitHub Skills (free hands-on)",
+        "url": "https://skills.github.com/",
+        "source": "GitHub",
+        "note": "Interactive free courses on Git/Actions workflows."
+      }
+    ]
+  }
+}
