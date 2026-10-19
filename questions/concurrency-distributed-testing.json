@@ -336,65 +336,65 @@
       "explanation": "Partitions, kills, latency, loss — chaos with assertions."
     }
   ],
-  "documentation": "<h3>Concurrency & Multi-Node Testing</h3>\n<p>Interview signal: you can name failure classes and design oracles, not only recite definitions.</p>\n<ul>\n<li>Data races, atomicity, lock ordering, deadlocks</li>\n<li>TSan / ASan and stress schedules</li>\n<li>Avoid sleep-based sync; assert progress/invariants</li>\n<li>Inject partitions, jitter starts, measure p99 carefully</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Races, locks, and why shared counters break</li>\n<li><strong>Advanced:</strong> Heisenbugs, TSan, and sleep-free sync</li>\n<li><strong>Expert:</strong> Partitions, thundering herds, p99 honesty</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual\" target=\"_blank\" rel=\"noopener noreferrer\">ThreadSanitizer wiki</a> — How to build/run TSan on C/C++.</li><li><a href=\"https://preshing.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Preshing on Programming — atomics &amp; locks</a> — Clear free deep-dives on memory ordering &amp; concurrency.</li><li><a href=\"https://docs.python.org/3/library/threading.html\" target=\"_blank\" rel=\"noopener noreferrer\">Python threading docs</a> — Locks, events, and primitives for harnesses.</li></ul>",
+  "documentation": "\n<h3>Concurrency & Multi-Node Testing — Study Guide</h3>\n<p>For the full interactive course, open this section’s <strong>Learn</strong> path (Basics → Advanced → Expert). Every important command is explained flag-by-flag there.</p>\n<h4>Level map</h4>\n<ul>\n<li><strong>Basics:</strong> Races, locks, deadlocks — with working snippets</li>\n<li><strong>Advanced:</strong> TSan, heisenbugs, sleep-free synchronization</li>\n<li><strong>Expert:</strong> Partitions, herds, p99 honesty</li>\n</ul>\n<h4>Free resources</h4>\n<ul><li><a href=\"https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual\" target=\"_blank\" rel=\"noopener noreferrer\">ThreadSanitizer manual</a> — How to build/run TSan.</li><li><a href=\"https://preshing.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Preshing on Programming</a> — Atomics/memory ordering explainers.</li><li><a href=\"https://docs.python.org/3/library/threading.html\" target=\"_blank\" rel=\"noopener noreferrer\">Python threading docs</a> — Locks/events for harnesses.</li></ul>",
   "tutorial": {
-    "intro": "From data races to multi-node partitions: name the failure class, then design an oracle that would catch it.",
+    "intro": "Learn concurrency and multi-node failure modes with clear definitions, then practice the tools and oracles used to catch them.",
     "levels": [
       {
         "id": "basics",
         "title": "Basics",
         "badge": "🌱",
-        "minutes": 21,
-        "tagline": "Races, locks, and why shared counters break",
-        "html": "\n<ul>\n<li><strong>Data race:</strong> conflicting concurrent accesses without happens-before (UB in C++).</li>\n<li><strong>Critical section:</strong> protect with mutex/atomic.</li>\n<li><strong>Deadlock:</strong> circular wait — fix with global lock order.</li>\n</ul>\n<pre>with lock:\n    counter += 1</pre>\n<div class=\"tutorial-callout tip\"><strong>Remember</strong><p>Release-only corruption under stress ⇒ suspect races; try TSan.</p></div>\n\n<h4>Happens-before intuition</h4>\n<p>If thread A writes <code>x=1</code> and thread B reads <code>x</code> with no lock/atomic/join, you have a race. “I never saw it fail” is not proof.</p><h4>Lock rules of thumb</h4>\n<ul>\n<li>Hold locks briefly; never do network I/O under a global lock without eyes open</li>\n<li>Document lock order in headers for multi-lock code</li>\n<li>Prefer higher-level concurrent queues when they fit</li>\n</ul>\n<pre>// Pseudo lock order: always acquire A before B\nstd::lock(mutex_a, mutex_b); // C++17 avoids deadlock pair</pre>"
+        "minutes": 35,
+        "tagline": "Races, locks, deadlocks — with working snippets",
+        "html": "\n<p><strong>Data race:</strong> two threads access the same memory, at least one write, no happens-before (lock/atomic/join). In C++ this is undefined behavior.</p>\n<pre>import threading\ncounter = 0\nlock = threading.Lock()\n\ndef worker():\n    global counter\n    for _ in range(100000):\n        with lock:\n            counter += 1</pre>\n<ul>\n<li><code>threading.Lock()</code> — mutual exclusion primitive.</li>\n<li><code>with lock:</code> — acquire on enter, release on exit (even if exception).</li>\n<li><code>counter += 1</code> — must be inside the lock; it is read-modify-write, not atomic.</li>\n</ul>\n<div class=\"why-box\"><strong>Deadlock</strong><p>Thread A holds L1 waits for L2; B holds L2 waits for L1. Prevent with a global lock order (always acquire L1 before L2).</p></div>\n\n<h4>See the race without a lock</h4>\n<pre># BAD: remove the lock and rerun — final counter often &lt; 200000\n# That missing count *is* the race teaching moment.</pre>\n<div class=\"cmd-block\"><pre>python3 race_demo.py</pre><dl class=\"cmd-explain\"><dt><code>python3 race_demo.py</code></dt><dd>Run your two-thread increment demo; compare locked vs unlocked results.</dd></dl></div>\n"
       },
       {
         "id": "advanced",
         "title": "Advanced",
         "badge": "🚀",
-        "minutes": 24,
-        "tagline": "Heisenbugs, TSan, and sleep-free sync",
-        "html": "\n<ul>\n<li><strong>Heisenbug:</strong> changes when observed (logging/debugger timing).</li>\n<li><strong>TSan:</strong> dynamic detector for data races in native code.</li>\n<li>Prefer condition variables / state polling with timeout over <code>sleep(2)</code>.</li>\n<li>Invariants beat spot checks: every enqueue has exactly one dequeue.</li>\n</ul>\n<div class=\"tutorial-callout lab\"><strong>Drill</strong><p>Write an invariant for a multi-producer queue before you write the test threads.</p></div>\n\n<h4>Tools map</h4>\n<ul>\n<li>TSan for races; ASan for memory; UBSan for UB</li>\n<li>Helgrind (historical) / modern sanitizers preferred</li>\n<li>Record timestamps + thread IDs in harness logs when reproducing</li>\n</ul><h4>Reproducing races</h4>\n<ol>\n<li>Increase threads/cores; run under load</li>\n<li>Build with TSan; fix until clean</li>\n<li>Add invariant asserts in debug builds</li>\n<li>Only then consider timing logs (they perturb)</li>\n</ol>\n<div class=\"tutorial-callout pitfall\"><strong>Pitfall</strong>Shipping with “retry until pass” in CI for race tests teaches the suite to lie.</div>"
+        "minutes": 40,
+        "tagline": "TSan, heisenbugs, sleep-free synchronization",
+        "html": "\n<p><strong>Heisenbug:</strong> disappears or changes when you add prints/debugger — usually timing/race related.</p>\n<div class=\"cmd-block\"><pre>g++ -fsanitize=thread -g -O1 main.cpp -o main && ./main</pre><dl class=\"cmd-explain\"><dt><code>-fsanitize=thread</code></dt><dd>Compile/link with ThreadSanitizer (TSan) to detect data races at runtime.</dd><dt><code>-g</code></dt><dd>Debug symbols for useful stack traces.</dd><dt><code>-O1</code></dt><dd>Some optimization; TSan docs recommend avoiding heavy -O3 at first.</dd></dl></div>\n<div class=\"tutorial-callout pitfall\"><strong>sleep(2) in tests</strong>\n<p>Fixed sleeps are timing assumptions. Prefer waiting on a condition/event with a timeout, or poll a state oracle.</p></div>\n<p><strong>Invariant example:</strong> every enqueued item is dequeued exactly once (conservation).</p>\n\n<div class=\"cmd-block\"><pre>export TSAN_OPTIONS=halt_on_error=1</pre><dl class=\"cmd-explain\"><dt><code>TSAN_OPTIONS</code></dt><dd>Runtime config for ThreadSanitizer.</dd><dt><code>halt_on_error=1</code></dt><dd>Stop on first race report (useful in CI).</dd></dl></div>\n<div class=\"why-box\"><strong>Fix order</strong><p>Increase concurrency → run under TSan → fix races → only then add lightweight logging. Logging first can hide races (heisenbug).</p></div>\n"
       },
       {
         "id": "expert",
         "title": "Expert",
         "badge": "🏆",
-        "minutes": 26,
-        "tagline": "Partitions, thundering herds, p99 honesty",
-        "html": "\n<ul>\n<li>Inject disconnect/partition; assert reconnect/resubscribe bounds.</li>\n<li>Stagger multi-node starts with jitter — herds amplify control-plane storms.</li>\n<li>Publish p99/p999 with pinned CPUs; averages hide pain.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Experienced line</strong><p>“We chaos-test recovery paths and treat liveness as a first-class assertion, not a hopeful log line.”</p></div>\n\n<h4>Distributed assertions</h4>\n<ul>\n<li>Linearizability vs eventual consistency — know which your SDK claims</li>\n<li>Clock skew: don’t assert global time order without sync assumptions</li>\n<li>Failover tests: kill leader; prove clients recover within SLO</li>\n</ul><h4>Multi-node lab patterns</h4>\n<ul>\n<li>Orchestrator starts roles with intentional delays/jitter</li>\n<li>Fault script: SIGKILL, NIC flap, 30s partition, clock step</li>\n<li>Pass criteria: recovery SLO + no duplicate irreversible side effects</li>\n<li>Capture per-node logs into one CI artifact bundle</li>\n</ul>"
+        "minutes": 35,
+        "tagline": "Partitions, herds, p99 honesty",
+        "html": "\n<ul>\n<li>Inject disconnect/partition; assert reconnect/resubscribe within an SLO.</li>\n<li>Stagger multi-node starts with jitter — synchronized herds amplify storms.</li>\n<li>Report p99/p999 with pinned CPUs; averages hide tail latency.</li>\n</ul>\n<div class=\"cmd-block\"><pre>python -c \"import time,random; time.sleep(random.uniform(0,2))\"</pre><dl class=\"cmd-explain\"><dt><code>random.uniform(0,2)</code></dt><dd>Example jitter delay before starting a node role — avoid thundering herds.</dd></dl></div>\n<div class=\"tutorial-callout interview\"><strong>Experienced line</strong>\n<p>“We chaos-test recovery and treat liveness as a first-class assertion.”</p></div>\n\n<div class=\"cmd-block\"><pre>tc qdisc add dev eth0 root netem delay 100ms loss 1%</pre><dl class=\"cmd-explain\"><dt><code>tc qdisc add</code></dt><dd>Add a traffic-control queueing discipline (needs root/net_admin).</dd><dt><code>dev eth0</code></dt><dd>Interface to impair.</dd><dt><code>root netem</code></dt><dd>Network emulator.</dd><dt><code>delay 100ms loss 1%</code></dt><dd>Inject latency and packet loss for recovery testing.</dd></dl></div>\n<p>Always remove netem after the lab (<code>tc qdisc del dev eth0 root</code>) or you will confuse the next job.</p>\n"
       }
     ],
     "resources": [
       {
-        "title": "ThreadSanitizer wiki",
+        "title": "ThreadSanitizer manual",
         "url": "https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual",
         "source": "Google Sanitizers",
-        "note": "How to build/run TSan on C/C++."
+        "note": "How to build/run TSan."
       },
       {
-        "title": "Preshing on Programming — atomics &amp; locks",
+        "title": "Preshing on Programming",
         "url": "https://preshing.com/",
         "source": "Preshing",
-        "note": "Clear free deep-dives on memory ordering &amp; concurrency."
+        "note": "Atomics/memory ordering explainers."
       },
       {
         "title": "Python threading docs",
         "url": "https://docs.python.org/3/library/threading.html",
         "source": "Python.org",
-        "note": "Locks, events, and primitives for harnesses."
+        "note": "Locks/events for harnesses."
       },
       {
-        "title": "Jepsen.io analyses",
+        "title": "Jepsen analyses",
         "url": "https://jepsen.io/analyses",
         "source": "Jepsen",
-        "note": "World-class free distributed-systems failure narratives."
+        "note": "Distributed failure case studies."
       },
       {
-        "title": "Awesome Chaos Engineering (lists free tools)",
+        "title": "Awesome Chaos Engineering",
         "url": "https://github.com/dastergon/awesome-chaos-engineering",
         "source": "Community",
-        "note": "Curated free chaos/fault-injection resources."
+        "note": "Curated free chaos tools/articles."
       }
     ]
   }

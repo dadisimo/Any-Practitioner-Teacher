@@ -305,33 +305,33 @@
       "explanation": "Python for glue; C++ for fidelity/performance."
     }
   ],
-  "documentation": "<h3>Python & C++ for Verification</h3>\n<p>Daily craft for SDK verification teams: Python harnesses + native fidelity.</p>\n<ul>\n<li>Python: parsing, fixtures, pathlib, generators, orchestration</li>\n<li>C++: RAII, smart pointers, deleted copies, UB/races awareness</li>\n<li>Design reviews: ownership-safe APIs beat raw free() contracts</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Parsing, pathlib, and tiny pytest</li>\n<li><strong>Advanced:</strong> RAII, unique_ptr, and polyglot harnesses</li>\n<li><strong>Expert:</strong> UB awareness and API review instincts</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://docs.python.org/3/tutorial/\" target=\"_blank\" rel=\"noopener noreferrer\">Official Python Tutorial</a> — The canonical free Python on-ramp.</li><li><a href=\"https://www.learncpp.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Learn C++ (learncpp.com)</a> — Best free structured C++ course-style site.</li><li><a href=\"https://en.cppreference.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cppreference</a> — Authoritative free C++ standard library reference.</li></ul>",
+  "documentation": "\n<h3>Python & C++ for Verification — Study Guide</h3>\n<p>For the full interactive course, open this section’s <strong>Learn</strong> path (Basics → Advanced → Expert). Every important command is explained flag-by-flag there.</p>\n<h4>Level map</h4>\n<ul>\n<li><strong>Basics:</strong> Parsing, pathlib, pytest — with every line explained</li>\n<li><strong>Advanced:</strong> RAII, unique_ptr, deleted copies</li>\n<li><strong>Expert:</strong> Sanitizer builds and API review instincts</li>\n</ul>\n<h4>Free resources</h4>\n<ul><li><a href=\"https://docs.python.org/3/tutorial/\" target=\"_blank\" rel=\"noopener noreferrer\">Official Python Tutorial</a> — Canonical free Python on-ramp.</li><li><a href=\"https://www.learncpp.com/\" target=\"_blank\" rel=\"noopener noreferrer\">LearnCpp.com</a> — Best free structured C++ course-style site.</li><li><a href=\"https://en.cppreference.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cppreference</a> — Standard library reference.</li></ul>",
   "tutorial": {
-    "intro": "Become bilingual: Python for orchestration and C++ for fidelity — with ownership-safe APIs.",
+    "intro": "Become bilingual for SDK work: Python for orchestration and C++ for fidelity — with ownership-safe APIs and explained tooling.",
     "levels": [
       {
         "id": "basics",
         "title": "Basics",
         "badge": "🌱",
-        "minutes": 22,
-        "tagline": "Parsing, pathlib, and tiny pytest",
-        "html": "\n<pre>def parse_kv(line):\n    k, v = line.split('=', 1)\n    return k.strip(), v.strip()\n\nPath('reports').mkdir(parents=True, exist_ok=True)</pre>\n<p>Python shines at glue: logs, artifacts, CI orchestration.</p>\n<div class=\"tutorial-callout tip\"><strong>Remember</strong><p><code>set()</code> makes a set; <code>{}</code> is a dict.</p></div>\n\n<h4>Python essentials for harnesses</h4>\n<ul>\n<li>venv + pinned <code>requirements.txt</code></li>\n<li>subprocess with timeouts; never hang a CI agent forever</li>\n<li>pathlib over string concat for paths</li>\n</ul><h4>Mini exercise</h4>\n<p>Write <code>classify_rc</code> and a pytest that checks 0/77/1. Then wrap a subprocess call with timeout and map return codes through it.</p>"
+        "minutes": 35,
+        "tagline": "Parsing, pathlib, pytest — with every line explained",
+        "html": "\n<pre>def parse_kv(line):\n    if \"=\" not in line:\n        raise ValueError(\"missing =\")\n    k, v = line.split(\"=\", 1)\n    return k.strip(), v.strip()</pre>\n<ul>\n<li><code>split(\"=\", 1)</code> — split on the first <code>=</code> only (values may contain <code>=</code>).</li>\n<li><code>strip()</code> — remove surrounding whitespace.</li>\n<li><code>ValueError</code> — fail fast on bad input (better than silent wrong tuples).</li>\n</ul>\n<div class=\"cmd-block\"><pre>python -c \"from pathlib import Path; Path('reports').mkdir(parents=True, exist_ok=True)\"</pre><dl class=\"cmd-explain\"><dt><code>Path(...).mkdir</code></dt><dd>Create directory.</dd><dt><code>parents=True</code></dt><dd>Create intermediate dirs if needed.</dd><dt><code>exist_ok=True</code></dt><dd>Do not error if it already exists (idempotent CI).</dd></dl></div>\n\n<h4>Virtual environments (do this before installing test deps)</h4>\n<div class=\"cmd-block\"><pre>python3 -m venv .venv</pre><dl class=\"cmd-explain\"><dt><code>python3 -m venv</code></dt><dd>Create an isolated Python environment directory.</dd><dt><code>.venv</code></dt><dd>Folder name for the environment (common convention).</dd></dl></div>\n<div class=\"cmd-block\"><pre>source .venv/bin/activate</pre><dl class=\"cmd-explain\"><dt><code>source</code></dt><dd>Run the activate script in your current shell.</dd><dt><code>.venv/bin/activate</code></dt><dd>Puts this venv’s python/pip first on PATH.</dd></dl></div>\n<div class=\"cmd-block\"><pre>pip install -r requirements.txt</pre><dl class=\"cmd-explain\"><dt><code>pip install</code></dt><dd>Install packages into the active environment.</dd><dt><code>-r requirements.txt</code></dt><dd>Read package pins from the requirements file.</dd></dl></div>\n<div class=\"why-box\"><strong>Why venv</strong><p>CI and laptops diverge constantly. A venv + pinned requirements makes harness deps reproducible.</p></div>\n\n<h4>Running one test file verbosely</h4>\n<div class=\"cmd-block\"><pre>pytest -q -vv test_parse.py</pre><dl class=\"cmd-explain\"><dt><code>pytest</code></dt><dd>Discover and run tests.</dd><dt><code>-q</code></dt><dd>Short summary.</dd><dt><code>-vv</code></dt><dd>Extra verbose assertion diffs / statuses.</dd><dt><code>test_parse.py</code></dt><dd>Only this file.</dd></dl></div>\n"
       },
       {
         "id": "advanced",
         "title": "Advanced",
         "badge": "🚀",
-        "minutes": 24,
-        "tagline": "RAII, unique_ptr, and polyglot harnesses",
-        "html": "\n<ul>\n<li><strong>RAII:</strong> resource lifetime follows object lifetime.</li>\n<li><strong>unique_ptr:</strong> exclusive ownership; <strong>shared_ptr:</strong> refcounted sharing.</li>\n<li>Delete copy ctor/assignment for handles that must not double-close.</li>\n<li>Shell out to native stress binaries from Python for fidelity/perf.</li>\n</ul>\n<pre>DeviceHandle(const DeviceHandle&) = delete;\nDeviceHandle& operator=(const DeviceHandle&) = delete;</pre>\n\n<h4>C++ ownership rules of thumb</h4>\n<ul>\n<li>Default to <code>unique_ptr</code> for exclusive resources</li>\n<li>Use <code>shared_ptr</code> only with a clear shared lifetime story</li>\n<li>prefer <code>std::span</code>/views at API boundaries when possible</li>\n<li>compile with <code>-Wall -Wextra</code> and sanitizers in CI</li>\n</ul><h4>Exception safety (C++)</h4>\n<ul>\n<li>If a constructor acquires two resources, use RAII members so partial failure cleans up</li>\n<li>Don’t free in callers if an exception can skip the free</li>\n<li>Prefer value semantics / move for transfer</li>\n</ul>"
+        "minutes": 40,
+        "tagline": "RAII, unique_ptr, deleted copies",
+        "html": "\n<p><strong>RAII:</strong> resource lifetime follows object lifetime — constructors acquire, destructors release.</p>\n<pre>#include &lt;mutex&gt;\n#include &lt;memory&gt;\n\nstruct DeviceHandle {\n  DeviceHandle();\n  ~DeviceHandle();\n  DeviceHandle(const DeviceHandle&) = delete;\n  DeviceHandle& operator=(const DeviceHandle&) = delete;\n};</pre>\n<ul>\n<li><code>= delete</code> — forbid copying so you cannot double-close a handle.</li>\n<li><code>std::unique_ptr&lt;T&gt;</code> — exclusive ownership, movable.</li>\n<li><code>std::shared_ptr&lt;T&gt;</code> — shared ownership with refcount (use only with a clear shared lifetime).</li>\n</ul>\n<div class=\"why-box\"><strong>Polyglot harnesses</strong><p>Python orchestrates matrices and reporting; C++ stress binaries exercise production-like paths under sanitizers.</p></div>\n\n<h4>unique_ptr in practice</h4>\n<pre>#include &lt;memory&gt;\nstd::unique_ptr&lt;Device&gt; open_device() {\n  return std::make_unique&lt;Device&gt;(/* args */);\n}\n// ownership moves:\nstd::unique_ptr&lt;Device&gt; d = open_device();</pre>\n<ul>\n<li><code>make_unique</code> — allocate and wrap safely (exception-safe).</li>\n<li>Returning <code>unique_ptr</code> — transfers ownership to the caller clearly.</li>\n<li>Copying <code>unique_ptr</code> — compile error (by design).</li>\n</ul>\n"
       },
       {
         "id": "expert",
         "title": "Expert",
         "badge": "🏆",
-        "minutes": 22,
-        "tagline": "UB awareness and API review instincts",
-        "html": "\n<ul>\n<li>Data races on non-atomic C++ objects are <strong>undefined behavior</strong>.</li>\n<li>In design reviews, push APIs that return <code>unique_ptr</code>/RAII handles — not raw “caller must free.”</li>\n<li>Exit-code taxonomy (<code>0</code> pass, <code>77</code> skip, else fail) keeps automation honest.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Hybrid answer</strong><p>“Python owns the matrix and reporting; C++ owns the packet path under TSan/ASan builds.”</p></div>\n\n<h4>Interop craft</h4>\n<ul>\n<li>pybind11/ctypes/cffi for thin bindings — keep logic testable on both sides</li>\n<li>ABI stability: version your native SONAME; test old apps against new .so</li>\n<li>Crash reproduction: core dumps, <code>gdb</code>, symbolized stacks in CI artifacts</li>\n</ul><h4>Build matrix literacy</h4>\n<pre>cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=\"-fsanitize=address,undefined -fno-omit-frame-pointer\"\ncmake -DCMAKE_BUILD_TYPE=Release  # perf jobs\n# Python: tox/nox across 3.x versions</pre>\n<p>Experienced engineers always know which build found the bug.</p>"
+        "minutes": 35,
+        "tagline": "Sanitizer builds and API review instincts",
+        "html": "\n<div class=\"cmd-block\"><pre>g++ -fsanitize=address,undefined -fno-omit-frame-pointer -g -O1 main.cpp -o main</pre><dl class=\"cmd-explain\"><dt><code>-fsanitize=address</code></dt><dd>ASan: catch heap-use-after-free, buffer overflows, etc.</dd><dt><code>-fsanitize=undefined</code></dt><dd>UBSan: catch many undefined behaviors.</dd><dt><code>-fno-omit-frame-pointer</code></dt><dd>Better stack traces.</dd><dt><code>-g -O1</code></dt><dd>Symbols + modest optimization for actionable reports.</dd></dl></div>\n<p>In design reviews, push APIs that return <code>unique_ptr</code>/RAII handles — not raw “caller must free” pointers.</p>\n<div class=\"tutorial-callout interview\"><strong>Hybrid answer</strong>\n<p>“Python owns the matrix and reporting; C++ owns the packet path under ASan/TSan builds.”</p></div>\n\n<h4>subprocess with a timeout (Python harness pattern)</h4>\n<pre>import subprocess\nsubprocess.run([\"./stress\", \"--seconds\", \"30\"], check=True, timeout=90)</pre>\n<ul>\n<li><code>check=True</code> — raise if exit code ≠ 0.</li>\n<li><code>timeout=90</code> — kill hung stress jobs so CI agents don’t stick forever.</li>\n</ul>\n"
       }
     ],
     "resources": [
@@ -339,10 +339,10 @@
         "title": "Official Python Tutorial",
         "url": "https://docs.python.org/3/tutorial/",
         "source": "Python.org",
-        "note": "The canonical free Python on-ramp."
+        "note": "Canonical free Python on-ramp."
       },
       {
-        "title": "Learn C++ (learncpp.com)",
+        "title": "LearnCpp.com",
         "url": "https://www.learncpp.com/",
         "source": "LearnCpp",
         "note": "Best free structured C++ course-style site."
@@ -351,19 +351,19 @@
         "title": "cppreference",
         "url": "https://en.cppreference.com/",
         "source": "cppreference",
-        "note": "Authoritative free C++ standard library reference."
+        "note": "Standard library reference."
       },
       {
-        "title": "freeCodeCamp Python curriculum",
-        "url": "https://www.freecodecamp.org/learn/scientific-computing-with-python/",
-        "source": "freeCodeCamp",
-        "note": "Free interactive Python practice."
-      },
-      {
-        "title": "The C++ Core Guidelines",
+        "title": "C++ Core Guidelines",
         "url": "https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines",
         "source": "isocpp",
-        "note": "Free guidance on ownership, RAII, and safety."
+        "note": "Ownership/RAII guidance."
+      },
+      {
+        "title": "freeCodeCamp Python",
+        "url": "https://www.freecodecamp.org/learn/scientific-computing-with-python/",
+        "source": "freeCodeCamp",
+        "note": "Interactive free practice."
       }
     ]
   }
