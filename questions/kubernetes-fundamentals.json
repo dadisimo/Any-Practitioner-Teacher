@@ -8,10 +8,10 @@
       "id": 1,
       "question": "What is Kubernetes primarily used for?",
       "options": [
-        "Writing container images",
-        "Replacing Linux entirely",
+        "Authoring and publishing container images to a local development registry",
+        "Completely replacing the Linux kernel as the cluster operating system",
         "Orchestrating and managing containerized applications at scale",
-        "Serving as a programming language for cloud-native apps"
+        "Acting as a general-purpose programming language for cloud-native apps"
       ],
       "correct": 2,
       "explanation": "Kubernetes is a container orchestration platform that automates deployment, scaling, networking, and lifecycle management for containerized workloads."
@@ -44,10 +44,10 @@
       "id": 4,
       "question": "What does the kube-scheduler do?",
       "options": [
-        "Stores Secret data",
-        "Assigns newly created Pods to suitable nodes",
-        "Builds container images",
-        "Rotates TLS certificates automatically"
+        "Persisting Secret objects and encrypting them at rest in etcd",
+        "Assigns newly created Pods to suitable nodes based on constraints",
+        "Building OCI container images from Dockerfiles during CI pipelines",
+        "Automatically rotating cluster TLS certificates on a fixed schedule"
       ],
       "correct": 1,
       "explanation": "The kube-scheduler watches for unscheduled Pods and selects a node for each Pod based on resource requirements, policies, and placement rules."
@@ -69,9 +69,9 @@
       "question": "What is the main purpose of a Deployment?",
       "options": [
         "To manage stateless application rollouts and maintain desired replicas",
-        "To replace kube-proxy",
-        "To expose a Service externally",
-        "To provide persistent storage"
+        "To replace kube-proxy as the primary Service networking dataplane",
+        "To expose an application Service on a public internet-facing endpoint",
+        "To attach durable block or file storage volumes to running containers"
       ],
       "correct": 0,
       "explanation": "A Deployment declaratively manages stateless applications by creating ReplicaSets, maintaining the desired number of replicas, and supporting rolling updates and rollbacks."
@@ -80,10 +80,10 @@
       "id": 7,
       "question": "What does a ReplicaSet ensure?",
       "options": [
-        "That every node has the same operating system",
-        "That a specified number of Pod replicas are running",
-        "That external DNS records stay synchronized",
-        "That containers share the same filesystem"
+        "That every worker node runs an identical guest operating system image",
+        "That a specified number of Pod replicas are running at all times",
+        "That public DNS records for Services stay synchronized with Route 53",
+        "That all containers in a Pod share one read-write root filesystem"
       ],
       "correct": 1,
       "explanation": "A ReplicaSet keeps the desired number of matching Pods running. If a Pod fails, the ReplicaSet creates a replacement."
@@ -92,10 +92,10 @@
       "id": 8,
       "question": "What does a ClusterIP Service provide?",
       "options": [
-        "Direct public internet access from every Pod",
-        "A node-level SSH endpoint",
+        "Publishing every Pod directly on the public internet without a proxy",
+        "Opening an SSH management endpoint on each worker node IP address",
         "An internal virtual IP for accessing a set of Pods inside the cluster",
-        "A persistent disk for stateful workloads"
+        "Allocating a durable persistent disk exclusively for stateful workloads"
       ],
       "correct": 2,
       "explanation": "ClusterIP is the default Service type. It exposes an application on an internal cluster IP so other workloads inside the cluster can reach it reliably."
@@ -104,10 +104,10 @@
       "id": 9,
       "question": "How does a NodePort Service expose an application?",
       "options": [
-        "By turning each Pod into its own load balancer",
-        "By creating a VPN tunnel to the control plane",
-        "By writing traffic rules directly into etcd",
-        "By opening the same static port on each node's IP address"
+        "Converting each Pod into its own cloud provider load balancer instance",
+        "Creating an encrypted VPN tunnel exclusively into the control plane",
+        "Writing raw iptables rules as documents stored directly inside etcd",
+        "By opening the same static port on each node's IP address for access"
       ],
       "correct": 3,
       "explanation": "A NodePort Service exposes the application on a port of every node, allowing external clients to access the Service through any node IP and that port."
@@ -117,9 +117,9 @@
       "question": "What kind of data should typically be stored in a ConfigMap?",
       "options": [
         "Non-sensitive configuration such as feature flags or application settings",
-        "TLS private keys only",
-        "Container image layers",
-        "Node resource metrics"
+        "Only TLS private keys and certificate material for ingress controllers",
+        "Compressed container image layers cached on each worker node disk",
+        "Live CPU and memory utilization samples scraped from every node"
       ],
       "correct": 0,
       "explanation": "ConfigMaps are designed for non-sensitive configuration data, such as environment-specific settings, command-line arguments, or configuration files."
@@ -128,10 +128,10 @@
       "id": 11,
       "question": "Why would you use a Secret instead of a ConfigMap?",
       "options": [
-        "Secrets automatically scale Deployments",
+        "Automatically increasing Deployment replica counts when load rises",
         "Secrets are intended for sensitive values such as passwords, tokens, and keys",
-        "Secrets can only be used by StatefulSets",
-        "Secrets replace Services for secure networking"
+        "Restricting usage so only StatefulSet workloads can mount the data",
+        "Replacing Kubernetes Services as the mechanism for secure networking"
       ],
       "correct": 1,
       "explanation": "Secrets are used for sensitive information. They help separate confidential data from regular configuration and can be handled with stricter access controls."
@@ -140,10 +140,10 @@
       "id": 12,
       "question": "What problem do Namespaces solve in Kubernetes?",
       "options": [
-        "They create new worker nodes automatically",
-        "They encrypt all traffic between Pods",
+        "Automatically provisioning additional worker nodes when capacity is low",
+        "Encrypting all east-west Pod traffic with mutual TLS by default",
         "They provide logical isolation and organization for resources in the same cluster",
-        "They convert stateless applications into stateful ones"
+        "Converting Deployments into StatefulSets without changing application code"
       ],
       "correct": 2,
       "explanation": "Namespaces let teams organize and isolate resources within one cluster, which is useful for separating environments, applications, or teams."
@@ -152,9 +152,9 @@
       "id": 13,
       "question": "What happens during a rolling update managed by a Deployment?",
       "options": [
-        "All Pods are deleted before any new ones are created",
-        "The cluster is restarted node by node",
-        "Only etcd is updated while workloads stay the same",
+        "Deleting every existing Pod before creating any of the new Pods",
+        "Rebooting every worker node sequentially until the cluster is updated",
+        "Updating only etcd keys while leaving all running workloads unchanged",
         "Old Pods are replaced gradually with new Pods to reduce downtime"
       ],
       "correct": 3,
@@ -165,9 +165,9 @@
       "question": "Why is a Kubernetes Service commonly used in front of Pods?",
       "options": [
         "It provides a stable endpoint and load balancing for a changing set of Pods",
-        "It compiles YAML manifests into binaries",
-        "It stores application logs permanently",
-        "It prevents Pods from restarting"
+        "It compiles Kubernetes YAML manifests into native machine-code binaries",
+        "It permanently archives application stdout logs into object storage",
+        "It freezes Pods so the kubelet never restarts failed containers"
       ],
       "correct": 0,
       "explanation": "Pods are ephemeral and their IP addresses can change. A Service gives clients a stable way to reach the application and can distribute traffic across multiple Pods."
@@ -176,10 +176,10 @@
       "id": 15,
       "question": "What is the job of the container runtime on a Kubernetes node?",
       "options": [
-        "To schedule Pods across the cluster",
-        "To pull images and run containers on the node",
-        "To expose Services with external IP addresses",
-        "To manage RBAC permissions"
+        "Selecting which node should run each newly created Pod in the cluster",
+        "To pull images and run containers on the node as the kubelet requests",
+        "Assigning public LoadBalancer IPs to Services from the cloud provider",
+        "Evaluating RBAC RoleBindings when users call the Kubernetes API"
       ],
       "correct": 1,
       "explanation": "The container runtime, such as containerd, is responsible for fetching images and running containers on the node as instructed by the kubelet."
@@ -188,10 +188,10 @@
       "id": 16,
       "question": "What does kube-proxy primarily handle?",
       "options": [
-        "Backing up etcd snapshots",
-        "Approving TLS certificates",
+        "Creating and restoring etcd snapshots for disaster recovery drills",
+        "Reviewing and approving CertificateSigningRequest objects for nodes",
         "Implementing Service networking and forwarding traffic to Pods",
-        "Scheduling control plane components"
+        "Placing control plane Pods onto specific control-plane nodes"
       ],
       "correct": 2,
       "explanation": "kube-proxy maintains network rules on each node so traffic sent to a Service can be forwarded to one of the matching backend Pods."
@@ -224,10 +224,10 @@
       "id": 19,
       "question": "What is a PersistentVolumeClaim (PVC) used for?",
       "options": [
-        "To expose a Deployment over HTTPS",
-        "To request storage resources for a workload",
-        "To limit CPU and memory on a Pod",
-        "To define node labels"
+        "Exposing a Deployment externally with TLS termination at the edge",
+        "To request storage resources for a workload that needs durable data",
+        "Setting CPU and memory limits that the kubelet enforces on a Pod",
+        "Declaring key-value labels that identify and select worker nodes"
       ],
       "correct": 1,
       "explanation": "A PersistentVolumeClaim is a storage request made by a workload. Kubernetes uses it to bind the workload to suitable persistent storage."
@@ -236,10 +236,10 @@
       "id": 20,
       "question": "What does a DaemonSet ensure?",
       "options": [
-        "Exactly one control plane per namespace",
-        "Exactly one Service per Deployment",
-        "A copy of a Pod runs on every matching node",
-        "All Pods restart at midnight"
+        "Running exactly one control-plane instance inside every Namespace",
+        "Creating exactly one Service object for every Deployment in the cluster",
+        "A copy of a Pod runs on every matching node for node-level agents",
+        "Forcing every Pod in the Namespace to restart on a nightly schedule"
       ],
       "correct": 2,
       "explanation": "A DaemonSet is used for node-level agents, such as log collectors or monitoring agents, by ensuring a Pod runs on every relevant node."

@@ -8,10 +8,10 @@
       "id": 1,
       "question": "What is AWS Identity and Access Management (IAM)?",
       "options": [
-        "A database service",
-        "A service that enables you to manage access to AWS services and resources securely",
-        "A monitoring service",
-        "A storage service"
+        "A managed relational database for storing user credentials, sessions, and auth tokens",
+        "A service for managing secure access to AWS services and resources",
+        "A metrics and alarm service that tracks resource health, performance, and uptime trends",
+        "A durable object storage service for backups, archives, media files, and application logs"
       ],
       "correct": 1,
       "explanation": "IAM enables you to manage access to AWS services and resources securely by creating users, groups, roles, and policies."
@@ -20,10 +20,10 @@
       "id": 2,
       "question": "What is the AWS principle of granting least privilege?",
       "options": [
-        "Give users maximum permissions",
+        "Grant every user administrator rights so work is never blocked",
         "Give users only the permissions they need to perform their job",
-        "Give everyone admin access",
-        "Give no one any permissions"
+        "Assign full admin access to all employees across every AWS account",
+        "Revoke all permissions from every identity including service roles"
       ],
       "correct": 1,
       "explanation": "Least privilege means granting only the permissions required to perform a task, minimizing security risks."
@@ -32,10 +32,10 @@
       "id": 3,
       "question": "What is an IAM Role?",
       "options": [
-        "A permanent user account",
+        "A long-lived IAM user account with permanent access keys for everyday tasks",
         "An identity with permissions that can be assumed by entities that need them",
-        "A type of database",
-        "A storage bucket"
+        "A managed NoSQL table used to store application configuration and feature flags",
+        "An S3 bucket that stores encrypted objects for long-term archival retention"
       ],
       "correct": 1,
       "explanation": "An IAM role is an identity with specific permissions that can be temporarily assumed by users, applications, or services."
@@ -44,10 +44,10 @@
       "id": 4,
       "question": "What is AWS Multi-Factor Authentication (MFA)?",
       "options": [
-        "A way to create multiple users",
-        "An extra layer of protection requiring users to present two or more credentials",
-        "A pricing model",
-        "A region selection feature"
+        "A feature that provisions many IAM users automatically from a single template",
+        "An extra layer of protection requiring two or more credentials to sign in",
+        "A billing option that reduces costs when you commit to a yearly spend amount",
+        "A console setting that chooses which AWS Region to deploy new resources into"
       ],
       "correct": 1,
       "explanation": "MFA adds an extra layer of security by requiring users to provide two or more verification factors: something they know (password) and something they have (device)."
@@ -68,10 +68,10 @@
       "id": 6,
       "question": "What is AWS Shield?",
       "options": [
-        "A VPN service",
-        "A managed DDoS protection service",
-        "A firewall",
-        "An antivirus service"
+        "A managed VPN that connects on-premises networks to AWS VPCs",
+        "A managed DDoS protection service that safeguards applications on AWS",
+        "A stateful firewall that filters traffic at the EC2 instance level",
+        "An endpoint antivirus agent that scans files on EC2 guest operating systems"
       ],
       "correct": 1,
       "explanation": "AWS Shield is a managed DDoS protection service that safeguards applications running on AWS."
@@ -80,10 +80,10 @@
       "id": 7,
       "question": "What does AWS WAF (Web Application Firewall) protect against?",
       "options": [
-        "Physical theft",
+        "Unauthorized physical access to data center hardware and racks",
         "Common web exploits that could affect application availability",
-        "Hard drive failures",
-        "Network outages"
+        "Sudden hard drive failures on underlying storage hardware",
+        "Regional network outages caused by fiber cuts or power loss"
       ],
       "correct": 1,
       "explanation": "AWS WAF helps protect web applications from common web exploits like SQL injection and cross-site scripting."
@@ -92,10 +92,10 @@
       "id": 8,
       "question": "What is Amazon GuardDuty?",
       "options": [
-        "A storage service",
+        "A durable object store for logs, backups, and compliance archives",
         "A threat detection service that monitors for malicious activity",
-        "A database service",
-        "A compute service"
+        "A managed relational database with automated backups and patching",
+        "A serverless compute platform that runs code without managing servers"
       ],
       "correct": 1,
       "explanation": "Amazon GuardDuty is an intelligent threat detection service that continuously monitors for malicious activity and unauthorized behavior."
@@ -104,10 +104,10 @@
       "id": 9,
       "question": "What is AWS Artifact?",
       "options": [
-        "A deployment tool",
+        "A CI/CD tool that packages and deploys application build artifacts",
         "A service providing on-demand access to AWS compliance reports",
-        "A storage service",
-        "A monitoring tool"
+        "An object storage class optimized for infrequent archive retrieval",
+        "A dashboard that graphs application latency and error rate metrics"
       ],
       "correct": 1,
       "explanation": "AWS Artifact provides on-demand access to AWS security and compliance documents (compliance reports and agreements)."
@@ -128,10 +128,10 @@
       "id": 11,
       "question": "What is AWS Security Hub?",
       "options": [
-        "A physical security service",
-        "A centralized security and compliance service that aggregates security findings",
-        "A VPN service",
-        "A firewall service"
+        "A service that guards physical data center doors, cages, and access badges",
+        "A centralized security service that aggregates findings across AWS accounts",
+        "A site-to-site VPN service connecting branch offices securely to AWS Regions",
+        "A web application firewall that blocks SQL injection and XSS at the edge"
       ],
       "correct": 1,
       "explanation": "AWS Security Hub provides a comprehensive view of security alerts and compliance status across AWS accounts."
@@ -140,10 +140,10 @@
       "id": 12,
       "question": "What is the root user in an AWS account?",
       "options": [
-        "A regular user account",
+        "A standard IAM user created for day-to-day operational tasks",
         "The account owner with complete access to all AWS resources",
-        "A temporary user",
-        "A service account"
+        "A short-lived federated identity used only during an SSO session",
+        "A machine identity used by applications to call AWS APIs"
       ],
       "correct": 1,
       "explanation": "The root user has complete access to all AWS resources and should be protected with MFA and used sparingly."
@@ -164,10 +164,10 @@
       "id": 14,
       "question": "What does AWS CloudTrail primarily record?",
       "options": [
-        "Application logs",
-        "API calls and account activity",
-        "Performance metrics",
-        "Database queries"
+        "Application stdout and stderr logs from running compute workloads",
+        "API calls and account activity across the AWS environment",
+        "Performance metrics such as CPU, memory, disk, and network usage",
+        "Database query plans and slow-query traces from managed database engines"
       ],
       "correct": 1,
       "explanation": "AWS CloudTrail records API calls and account activity, providing a history of AWS resource changes and user actions."
@@ -188,10 +188,10 @@
       "id": 16,
       "question": "What is the purpose of IAM policies?",
       "options": [
-        "To monitor AWS resources",
+        "Collecting metrics and logs from AWS resources and applications",
         "To define permissions - what actions are allowed or denied",
-        "To encrypt data",
-        "To create virtual networks"
+        "Encrypting objects and volumes using customer-managed keys",
+        "Provisioning isolated networks with subnets and route tables"
       ],
       "correct": 1,
       "explanation": "IAM policies are JSON documents that define permissions by specifying which actions are allowed or denied on which resources."
@@ -236,10 +236,10 @@
       "id": 20,
       "question": "What should you enable on your AWS root account as a security best practice?",
       "options": [
-        "Password sharing",
-        "Multi-Factor Authentication (MFA)",
-        "Public access",
-        "Anonymous login"
+        "Password sharing among trusted administrators on the operations team",
+        "Multi-Factor Authentication (MFA) for stronger sign-in verification",
+        "Public anonymous access so anyone can manage the account freely",
+        "Anonymous login without credentials for emergency break-glass access"
       ],
       "correct": 1,
       "explanation": "Enabling MFA on the root account adds an essential layer of security and is a critical security best practice."
@@ -250,10 +250,10 @@
     {
       "question": "What are the three components required for MFA?",
       "options": [
-        "Password, username, email",
-        "Something you know, something you have, something you are",
-        "User, group, role",
-        "Region, zone, subnet"
+        "A password, a username, and a verified recovery email address only",
+        "Something you know, something you have, and something you are",
+        "An IAM user, an IAM group, and an IAM role assigned together",
+        "An AWS Region, an Availability Zone, and a VPC subnet selection"
       ],
       "correct": 1
     },
@@ -290,10 +290,10 @@
     {
       "question": "What should you do with the AWS root account?",
       "options": [
-        "Use it for daily tasks",
-        "Share it with team members",
-        "Enable MFA and use sparingly",
-        "Delete it"
+        "Use the root account credentials for everyday operational tasks",
+        "Share the root password with trusted members of the engineering team",
+        "Enable MFA and use the root account only sparingly when required",
+        "Delete the root account entirely after creating the first IAM admin"
       ],
       "correct": 2
     }

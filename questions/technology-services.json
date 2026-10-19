@@ -8,10 +8,10 @@
       "id": 1,
       "question": "What is Amazon EC2?",
       "options": [
-        "A storage service",
+        "A managed object storage service for files and backups with unlimited capacity",
         "A virtual server in the cloud providing scalable compute capacity",
-        "A database service",
-        "A monitoring service"
+        "A fully managed relational database for MySQL and PostgreSQL workloads",
+        "A metrics and logging service that tracks resource health over time"
       ],
       "correct": 1,
       "explanation": "Amazon EC2 (Elastic Compute Cloud) provides scalable virtual servers in the cloud."
@@ -20,10 +20,10 @@
       "id": 2,
       "question": "What is Amazon S3 used for?",
       "options": [
-        "Running virtual machines",
+        "Running and scaling virtual machines with custom operating systems",
         "Object storage with unlimited scalability",
-        "Managing databases",
-        "Load balancing"
+        "Provisioning and managing relational database clusters in the cloud",
+        "Distributing incoming traffic evenly across multiple application targets"
       ],
       "correct": 1,
       "explanation": "Amazon S3 (Simple Storage Service) is an object storage service offering unlimited scalability, durability, and availability."
@@ -32,10 +32,10 @@
       "id": 3,
       "question": "What is AWS Lambda?",
       "options": [
-        "A database service",
+        "A managed NoSQL database optimized for key-value lookups at any scale",
         "A serverless compute service that runs code in response to events",
-        "A storage service",
-        "A networking service"
+        "A durable object storage service for archives and static website hosting",
+        "A virtual private network service for isolating cloud resources"
       ],
       "correct": 1,
       "explanation": "AWS Lambda lets you run code without provisioning or managing servers. You pay only for compute time consumed."
@@ -44,10 +44,10 @@
       "id": 4,
       "question": "What is Amazon RDS?",
       "options": [
-        "A file storage service",
+        "A shared network file system that multiple instances can mount concurrently",
         "A managed relational database service",
-        "A NoSQL database",
-        "A compute service"
+        "A fully managed document and key-value NoSQL database",
+        "A serverless function platform that runs code without servers"
       ],
       "correct": 1,
       "explanation": "Amazon RDS (Relational Database Service) makes it easy to set up, operate, and scale relational databases in the cloud."
@@ -56,10 +56,10 @@
       "id": 5,
       "question": "What is Amazon VPC?",
       "options": [
-        "A monitoring service",
-        "A virtual private cloud enabling you to launch AWS resources in a logically isolated network",
-        "A database service",
-        "A storage service"
+        "A centralized logging service that records API calls and account activity across AWS accounts",
+        "A virtual private cloud for launching resources in a logically isolated network",
+        "A petabyte-scale data warehouse designed for analytics workloads and BI queries",
+        "A content delivery network that caches and serves content from global edge locations"
       ],
       "correct": 1,
       "explanation": "Amazon VPC (Virtual Private Cloud) lets you provision a logically isolated section of AWS cloud with complete control over networking."
@@ -68,10 +68,10 @@
       "id": 6,
       "question": "What is Amazon CloudFront?",
       "options": [
-        "A compute service",
+        "A container orchestration service for Docker workloads on managed clusters",
         "A content delivery network (CDN) that delivers content with low latency",
-        "A database service",
-        "A monitoring service"
+        "A managed graph database for highly connected data relationships",
+        "An infrastructure monitoring service that collects custom metrics and alarms"
       ],
       "correct": 1,
       "explanation": "Amazon CloudFront is a fast CDN that securely delivers data, videos, applications, and APIs globally with low latency."
@@ -80,10 +80,10 @@
       "id": 7,
       "question": "What is Amazon DynamoDB?",
       "options": [
-        "A relational database",
+        "A managed SQL database engine compatible with MySQL and PostgreSQL",
         "A fully managed NoSQL database service",
-        "A file storage service",
-        "A compute service"
+        "A block storage volume attached to a single EC2 instance",
+        "An autoscaling group that adjusts EC2 capacity based on demand"
       ],
       "correct": 1,
       "explanation": "Amazon DynamoDB is a fast, flexible NoSQL database service providing single-digit millisecond performance at any scale."
@@ -92,10 +92,10 @@
       "id": 8,
       "question": "What is AWS Elastic Beanstalk?",
       "options": [
-        "A database service",
-        "A PaaS for deploying and scaling web applications without managing infrastructure",
-        "A storage service",
-        "A monitoring service"
+        "A managed message queue that decouples and scales distributed microservices reliably",
+        "A PaaS for deploying and scaling web apps without managing infrastructure",
+        "A DNS and domain registration service that routes end users to applications",
+        "A threat detection service that continuously monitors for malicious account activity"
       ],
       "correct": 1,
       "explanation": "AWS Elastic Beanstalk is a platform service that handles deployment, capacity provisioning, load balancing, and auto-scaling."
@@ -104,10 +104,10 @@
       "id": 9,
       "question": "What is Amazon Route 53?",
       "options": [
-        "A compute service",
-        "A scalable DNS web service",
-        "A storage service",
-        "A database service"
+        "A load balancer that distributes HTTP and HTTPS traffic across multiple targets",
+        "A scalable DNS web service for domain registration and traffic routing",
+        "An object storage bucket service used primarily for static website hosting",
+        "A managed Redis and Memcached cache that accelerates application response times"
       ],
       "correct": 1,
       "explanation": "Amazon Route 53 is a scalable DNS and domain name registration service that routes users to applications."
@@ -116,10 +116,10 @@
       "id": 10,
       "question": "What is Amazon SNS?",
       "options": [
-        "A storage service",
-        "A fully managed pub/sub messaging service",
-        "A compute service",
-        "A database service"
+        "A block storage service for attaching persistent volumes to virtual machines",
+        "A fully managed pub/sub messaging service for fan-out notifications",
+        "A batch compute service for submitting large-scale parallel job processing workloads",
+        "A relational database read-replica service optimized for read-heavy workloads"
       ],
       "correct": 1,
       "explanation": "Amazon SNS (Simple Notification Service) is a pub/sub messaging service for coordinating message delivery to subscribers."
@@ -128,10 +128,10 @@
       "id": 11,
       "question": "What is Amazon ECS?",
       "options": [
-        "A file storage service",
+        "A network file share that grows and shrinks automatically with usage",
         "A container orchestration service for running Docker containers",
-        "A database service",
-        "A monitoring service"
+        "A columnar data warehouse optimized for complex analytical queries",
+        "An API gateway that publishes and meters REST and WebSocket APIs"
       ],
       "correct": 1,
       "explanation": "Amazon ECS (Elastic Container Service) is a highly scalable container orchestration service for Docker containers."
@@ -141,9 +141,9 @@
       "question": "What is AWS Auto Scaling?",
       "options": [
         "A service that automatically adjusts capacity to maintain performance",
-        "A database backup service",
-        "A monitoring service only",
-        "A storage service"
+        "A managed backup service that snapshots databases on a fixed schedule",
+        "A dashboard that only displays metrics without changing resource capacity",
+        "An archive storage class intended solely for long-term cold data retention"
       ],
       "correct": 0,
       "explanation": "AWS Auto Scaling monitors applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest cost."
@@ -164,10 +164,10 @@
       "id": 14,
       "question": "What is Amazon Aurora?",
       "options": [
-        "A NoSQL database",
+        "A document-oriented NoSQL database with flexible JSON-like schemas",
         "A MySQL and PostgreSQL-compatible relational database",
-        "An in-memory cache",
-        "A data warehouse"
+        "An in-memory cache layer for Redis and Memcached workloads",
+        "A petabyte-scale data warehouse for SQL analytics and reporting"
       ],
       "correct": 1,
       "explanation": "Amazon Aurora is a MySQL and PostgreSQL-compatible relational database that is up to 5 times faster than MySQL and 3 times faster than PostgreSQL."
@@ -188,10 +188,10 @@
       "id": 16,
       "question": "What type of database is Amazon DynamoDB?",
       "options": [
-        "Relational SQL database",
-        "Key-value and document NoSQL database",
-        "Graph database",
-        "Time-series database"
+        "A traditional relational SQL database with fixed table schemas",
+        "A key-value and document NoSQL database",
+        "A graph database optimized for relationship traversal queries",
+        "A time-series database designed for IoT and metrics data"
       ],
       "correct": 1,
       "explanation": "DynamoDB is a fully managed NoSQL database that supports both key-value and document data models."
@@ -212,10 +212,10 @@
       "id": 18,
       "question": "What is Amazon EFS used for?",
       "options": [
-        "Object storage",
-        "Block storage for EC2",
+        "Object storage for unstructured blobs, media files, and static website assets",
+        "Block storage volumes that attach to and serve a single EC2 instance",
         "Shared file storage that can be mounted by multiple EC2 instances",
-        "Database storage"
+        "Managed database storage volumes used exclusively by Amazon RDS instances"
       ],
       "correct": 2,
       "explanation": "Amazon EFS (Elastic File System) provides scalable file storage that can be concurrently accessed by multiple EC2 instances."
@@ -236,10 +236,10 @@
       "id": 20,
       "question": "What is Amazon Redshift used for?",
       "options": [
-        "Web hosting",
-        "Data warehousing and analytics",
-        "File storage",
-        "Email services"
+        "Hosting static websites and simple web applications at the edge",
+        "Data warehousing and analytics using SQL and BI tools",
+        "Storing and retrieving arbitrary files as durable objects",
+        "Sending transactional email and marketing campaigns to users"
       ],
       "correct": 1,
       "explanation": "Amazon Redshift is a fast, fully managed data warehouse that makes it simple and cost-effective to analyze data using SQL and existing BI tools."
@@ -280,20 +280,20 @@
     {
       "question": "What does Amazon CloudFront provide?",
       "options": [
-        "Compute capacity",
-        "Content delivery network",
-        "Database storage",
-        "Virtual network"
+        "On-demand virtual servers for general-purpose compute workloads",
+        "A global content delivery network that caches and serves content",
+        "Managed relational database storage for transactional applications",
+        "A logically isolated private network for launching AWS resources"
       ],
       "correct": 1
     },
     {
       "question": "Which service helps deploy applications without managing infrastructure?",
       "options": [
-        "Amazon EC2",
-        "AWS Elastic Beanstalk",
-        "Amazon S3",
-        "Amazon VPC"
+        "Provisioning and managing individual virtual machine instances yourself",
+        "Deploying applications without managing underlying infrastructure",
+        "Storing unlimited objects with eleven-nines durability across Regions",
+        "Creating isolated virtual networks with custom CIDR and IP address ranges"
       ],
       "correct": 1
     }

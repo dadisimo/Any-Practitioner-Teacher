@@ -21,9 +21,9 @@
       "question": "What is the typical DNS name pattern for a Pod in a StatefulSet associated with a Headless Service?",
       "options": [
         "<pod-name>.<headless-service>.<namespace>.svc.cluster.local",
-        "<service>.<pod>.cluster.local",
-        "<namespace>.<pod-name>.svc.cluster.local",
-        "<pod-IP>.<service>.local"
+        "<service-name>.<pod-name>.<namespace>.svc.cluster.local",
+        "<namespace>.<pod-name>.<headless-service>.svc.cluster.local",
+        "<pod-IP-address>.<service-name>.<namespace>.svc.cluster.local"
       ],
       "correct": 0,
       "explanation": "StatefulSet Pods get stable DNS names of the form <pod-name>.<headless-service>.<namespace>.svc.cluster.local, combining the Pod name and Headless Service for discovery."
@@ -32,10 +32,10 @@
       "id": 3,
       "question": "What happens when a NetworkPolicy selects Pods and defines ingress or egress rules for them?",
       "options": [
-        "All traffic in the Cluster is blocked",
-        "All traffic is allowed if there is a Service",
-        "Selected Pods are isolated in the defined direction, and only traffic matching the allowed rules is permitted",
-        "The Policy automatically changes the labels of the Pods"
+        "All ingress and egress traffic across the entire Cluster is blocked immediately",
+        "All traffic is automatically allowed whenever any Service selects those Pods",
+        "Selected Pods are isolated in that direction; only matching allowed rules pass",
+        "The NetworkPolicy automatically rewrites and changes the labels on those Pods"
       ],
       "correct": 2,
       "explanation": "After isolation in a given direction, only traffic allowed by the relevant NetworkPolicy rules can pass. The effect is limited to the selected Pods and direction, not the whole cluster."
@@ -56,10 +56,10 @@
       "id": 5,
       "question": "Why is it important to define CPU requests when HPA is based on CPU utilization percentage?",
       "options": [
-        "To restart the kubelet",
-        "Because utilization percentage is calculated relative to the Container's CPU request",
-        "To allow the Pod to receive an IP address",
-        "Because requests define the number of replicas"
+        "So that the kubelet process on every node restarts itself whenever load rises",
+        "Because utilization % is calculated relative to the Container CPU request",
+        "So that each Pod can receive a routable cluster IP address from the CNI plugin",
+        "Because CPU requests are what directly determine the Deployment replica count"
       ],
       "correct": 1,
       "explanation": "Without an appropriate CPU request, Kubernetes cannot correctly compute utilization as a percentage of the request, so HPA targeting CPU utilization will not work reliably."
@@ -68,10 +68,10 @@
       "id": 6,
       "question": "In which API group/version is the modern stable Ingress resource defined?",
       "options": [
-        "v1",
-        "extensions/v1beta1",
-        "networking.k8s.io/v1",
-        "apps/v1"
+        "v1 (core group only, without a named API group prefix)",
+        "extensions/v1beta1 (legacy Ingress API removed from modern clusters)",
+        "networking.k8s.io/v1 (current stable Ingress API group and version)",
+        "apps/v1 (workload API group used for Deployments and StatefulSets)"
       ],
       "correct": 2,
       "explanation": "Stable Ingress is defined in networking.k8s.io/v1. Older APIs such as extensions/v1beta1 have been removed from modern Kubernetes versions."
@@ -80,10 +80,10 @@
       "id": 7,
       "question": "What is the difference between completions and parallelism in a Job?",
       "options": [
-        "completions is the number of Nodes and parallelism is the number of Namespaces",
-        "completions is the run time and parallelism is the DNS policy",
-        "There is no difference between them",
-        "completions is the number of required successful completions; parallelism is how many Pods can run in parallel"
+        "completions counts Nodes to use; parallelism counts Namespaces that must exist",
+        "completions is total Job run time; parallelism is the Pod DNS policy setting used",
+        "There is no meaningful difference; both fields configure identical Job behavior",
+        "completions is required successes; parallelism is concurrent Pods allowed"
       ],
       "correct": 3,
       "explanation": "completions defines how many successful finishes are required, while parallelism limits how many Pods may run concurrently."
@@ -116,10 +116,10 @@
       "id": 10,
       "question": "Which Access Modes are the standard recognized modes for a PersistentVolume?",
       "options": [
-        "ReadOnly, ReadWrite, Execute",
-        "ReadWriteOnce, ReadOnlyMany, ReadWriteMany",
-        "Single, Shared, Global",
-        "Read, Write, Admin"
+        "ReadOnly, ReadWrite, and Execute as the only recognized volume modes",
+        "ReadWriteOnce, ReadOnlyMany, and ReadWriteMany as standard Access Modes",
+        "Single, Shared, and Global as the only supported volume access categories",
+        "Read, Write, and Admin as the RBAC-style verbs applied to PersistentVolumes"
       ],
       "correct": 1,
       "explanation": "The classic standard Access Modes are ReadWriteOnce (RWO), ReadOnlyMany (ROX), and ReadWriteMany (RWX). ReadWriteOncePod is a newer additional mode."
@@ -128,10 +128,10 @@
       "id": 11,
       "question": "What does volumeBindingMode: WaitForFirstConsumer mean?",
       "options": [
-        "The PVC is deleted immediately after the Pod is created",
-        "All Volumes become ReadOnly",
-        "Binding or provisioning of storage is delayed until a Pod that uses the PVC is scheduled",
-        "The Pod is forced to run on the Control Plane"
+        "The PVC is deleted immediately as soon as any consuming Pod object is created",
+        "Every bound Volume is forcibly remounted as ReadOnly for all of its consumers",
+        "Storage binding/provisioning waits until a Pod using the PVC is scheduled",
+        "The consuming Pod is forced to run exclusively on a dedicated control-plane Node"
       ],
       "correct": 2,
       "explanation": "WaitForFirstConsumer delays volume binding/provisioning until a consuming Pod is scheduled, so topology and scheduling constraints can be considered before storage is chosen."
@@ -140,10 +140,10 @@
       "id": 12,
       "question": "What is the main difference between a Role and a ClusterRole?",
       "options": [
-        "A Role is limited to a Namespace; a ClusterRole can define cluster-scoped permissions and can also be bound with a RoleBinding in a Namespace",
-        "A Role is only for Pods and a ClusterRole is only for Nodes",
-        "A Role is for users and a ClusterRole is for passwords",
-        "There is no difference"
+        "A Role is Namespace-scoped; a ClusterRole can be cluster-wide or Namespace-bound",
+        "A Role may only grant Pod permissions; a ClusterRole may only grant Node access",
+        "A Role is exclusively for human users; a ClusterRole is exclusively for passwords",
+        "There is no practical difference; Role and ClusterRole are interchangeable aliases"
       ],
       "correct": 0,
       "explanation": "Role is namespaced. ClusterRole can cover cluster-scoped or namespaced resources and can be bound cluster-wide or within a Namespace via RoleBinding."
@@ -152,10 +152,10 @@
       "id": 13,
       "question": "What does apiGroups: [\"\"] mean in an RBAC rule?",
       "options": [
-        "All API groups",
-        "The apps API group",
-        "An empty group that grants access to no resources",
-        "The core API group, where resources such as Pods and Services live"
+        "Every available API group in the cluster, including extensions and custom resources",
+        "Only the apps API group used by Deployments, DaemonSets, and StatefulSets",
+        "An empty grant that intentionally matches no resources and allows no verbs",
+        "The core API group, where resources such as Pods and Services are defined"
       ],
       "correct": 3,
       "explanation": "An empty string in apiGroups refers to the core API group (sometimes called the legacy group), which includes Pods, Services, and similar resources."
@@ -176,10 +176,10 @@
       "id": 15,
       "question": "What does pathType: Prefix do in an Ingress rule?",
       "options": [
-        "Exact match to the path only",
-        "Match every path for every Host",
-        "Match by path prefix, including matching path element boundaries",
-        "Automatically redirect to HTTPS"
+        "Require an exact full-path match and reject any longer or shorter request path",
+        "Match every request path for every Host regardless of the configured path value",
+        "Match by path prefix using Kubernetes path-element boundary matching rules",
+        "Automatically issue an HTTP-to-HTTPS redirect for every single matching request"
       ],
       "correct": 2,
       "explanation": "Prefix matching uses the beginning of the path according to Kubernetes path-element boundary rules. Exact matching is pathType: Exact; HTTPS redirects are configured separately."
@@ -188,10 +188,10 @@
       "id": 16,
       "question": "What is the difference between a Service and an Ingress?",
       "options": [
-        "Both are used only for storing files",
-        "Ingress replaces all Services",
-        "A Service is used only for CronJobs",
-        "A Service provides a stable access point to Pods; Ingress defines HTTP/HTTPS routing, typically via an Ingress Controller"
+        "Both resources exist only to store configuration files inside the cluster etcd",
+        "Ingress fully replaces Services, so Services are no longer needed in any form",
+        "A Service can only front CronJob Pods and cannot target other workload types",
+        "A Service stabilizes Pod access; Ingress defines HTTP routing via a controller"
       ],
       "correct": 3,
       "explanation": "A Service gives stable network access and load balancing to Pods. Ingress describes external HTTP/HTTPS routing rules that an Ingress Controller implements."
@@ -200,10 +200,10 @@
       "id": 17,
       "question": "What happens if a Readiness Probe keeps failing?",
       "options": [
-        "The Container is deleted immediately",
-        "The Pod is marked not ready and typically stops receiving traffic from Services that select ready Pods",
-        "The Node is restarted",
-        "A new Deployment is created automatically"
+        "The Container process is deleted from the node immediately without any restart",
+        "The Pod is marked not ready and usually stops receiving matching Service traffic",
+        "The worker Node hosting the Pod is rebooted by the control plane automatically",
+        "A brand-new Deployment object is created automatically to replace the failing Pod"
       ],
       "correct": 1,
       "explanation": "Readiness determines whether the Pod should receive traffic. Repeated readiness failures remove the Pod from Service endpoints; they do not by themselves restart the container."
@@ -212,10 +212,10 @@
       "id": 18,
       "question": "What happens when a Liveness Probe fails beyond its configured failure threshold?",
       "options": [
-        "Kubernetes restarts the Container",
-        "The Pod always remains unchanged",
-        "The Service is deleted",
-        "A new Namespace is created"
+        "Kubernetes restarts the failing Container via the kubelet",
+        "The Pod always remains completely unchanged afterward",
+        "The Service object selecting the Pod is deleted entirely",
+        "A brand-new Namespace is created for the restarted Pod"
       ],
       "correct": 0,
       "explanation": "Sustained liveness failures cause the kubelet to restart the Container. Liveness does not delete Services or create Namespaces."
@@ -224,10 +224,10 @@
       "id": 19,
       "question": "What is the difference between HPA and the Cluster Autoscaler?",
       "options": [
-        "Both only increase the number of Nodes",
-        "HPA changes the number of Nodes; Cluster Autoscaler changes the number of Pods",
-        "HPA adjusts the replica count of a workload; Cluster Autoscaler adjusts the number of Nodes as needed",
-        "HPA and Cluster Autoscaler are different names for the same component"
+        "Both components only ever increase the count of worker Nodes in the cluster",
+        "HPA changes Node count; Cluster Autoscaler changes Pod replica counts instead",
+        "HPA scales Pod replicas; Cluster Autoscaler scales Nodes when needed",
+        "HPA and Cluster Autoscaler are simply two different names for one component"
       ],
       "correct": 2,
       "explanation": "Horizontal Pod Autoscaler scales Pod replicas. Cluster Autoscaler adds or removes Nodes based on pending Pods and cluster capacity conditions."
@@ -236,10 +236,10 @@
       "id": 20,
       "question": "What is the purpose of RBAC in Kubernetes?",
       "options": [
-        "Assigning IP addresses",
-        "Controlling which actions an identity is allowed to perform on resources",
-        "Compressing container images",
-        "Load balancing network traffic"
+        "Assigning cluster IP addresses to Pods and Services across Namespaces",
+        "Controlling which actions an identity may perform on Kubernetes resources",
+        "Compressing container image layers before they are pulled onto worker nodes",
+        "Load balancing east-west network traffic between Services and backend Pods"
       ],
       "correct": 1,
       "explanation": "RBAC defines permissions through Roles/ClusterRoles and bindings that associate those permissions with identities."
@@ -248,10 +248,10 @@
       "id": 21,
       "question": "What is a NetworkPolicy used for?",
       "options": [
-        "Changing the Kubernetes version",
-        "Managing passwords",
-        "Limiting ingress/egress network traffic between Pods and other destinations according to selected rules",
-        "Changing the number of replicas"
+        "Changing the Kubernetes control-plane version during a planned cluster upgrade",
+        "Storing and rotating application passwords and API tokens used by workloads",
+        "Limiting Pod ingress/egress traffic according to selected NetworkPolicy rules",
+        "Changing the desired replica count of a Deployment or ReplicaSet workload"
       ],
       "correct": 2,
       "explanation": "NetworkPolicy defines which traffic is allowed to and from selected Pods, subject to support from the cluster's network plugin."
@@ -260,10 +260,10 @@
       "id": 22,
       "question": "A Pod is in CrashLoopBackOff. What should you check first to understand the crash cause?",
       "options": [
-        "Delete all Nodes",
-        "Show the Container logs (for example with kubectl logs) and also check describe/events",
-        "Create a new Cluster",
-        "Immediately change the Service to NodePort"
+        "Delete every worker Node in the cluster and wait for replacements",
+        "Inspect Container logs (kubectl logs) and review describe output/events",
+        "Create an entirely new Cluster and redeploy all workloads from scratch",
+        "Immediately change the Service type to NodePort without further diagnosis"
       ],
       "correct": 1,
       "explanation": "logs, logs --previous when needed, and describe/events provide information about startup errors and related events. Deleting nodes or recreating clusters is not a first diagnostic step."
@@ -284,10 +284,10 @@
       "id": 24,
       "question": "Pods are reachable inside the Cluster, but the Service is not routing to them. What should you check first?",
       "options": [
-        "Whether the Service selector matches the Pod labels, and whether targetPort is correct",
-        "Rename the Namespace",
-        "Delete the Deployment",
-        "Reinstall kubectl on all Nodes"
+        "Whether the Service selector matches Pod labels and targetPort is correct",
+        "Whether renaming the Namespace would somehow repair Service routing",
+        "Whether deleting the entire Deployment is required before traffic resumes",
+        "Whether reinstalling kubectl on all Nodes would fix dataplane forwarding"
       ],
       "correct": 0,
       "explanation": "A mismatched selector or incorrect targetPort are common causes. Also verify Endpoints/EndpointSlices and Pod readiness."
@@ -308,10 +308,10 @@
       "id": 26,
       "question": "A Pod stays Pending and an event shows insufficient CPU. What does that mean?",
       "options": [
-        "The Scheduler could not find a Node that meets the resource and constraint requirements",
-        "The Image does not necessarily exist in the Registry",
-        "The Service selector is wrong",
-        "The Pod failed a Liveness Probe before it started"
+        "No Node met the Pod's CPU/memory requests and scheduling constraints",
+        "The container Image is missing from the Registry and cannot be pulled yet",
+        "The Service selector labels do not match any of the currently running Pods",
+        "The Pod already failed a Liveness Probe before the kubelet even started it"
       ],
       "correct": 0,
       "explanation": "insufficient CPU means scheduling could not place the Pod because no suitable Node had enough free CPU (or other constraints blocked placement). Image pull and liveness issues usually occur after scheduling."
@@ -320,10 +320,10 @@
       "id": 27,
       "question": "A password was stored in a ConfigMap and in a Git repository. What is the correct next step?",
       "options": [
-        "Leave it, because a ConfigMap is always encrypted",
-        "Move the secret to a Secret or appropriate secrets manager, restrict permissions, and rotate the exposed password",
-        "Move the password into a label on the Pod",
-        "Embed it in the container Image"
+        "Leave the password in place because ConfigMaps are always encrypted at rest",
+        "Move it to a Secret/secrets manager, restrict access, and rotate the password",
+        "Move the exposed password into a Pod label so it is no longer in a ConfigMap",
+        "Bake the password into the container Image layers and rebuild all Deployments"
       ],
       "correct": 1,
       "explanation": "Remove the secret from unsuitable sources, rotate it because it was exposed, use Secrets or a secrets manager with proper access controls, and consider encryption at rest. ConfigMaps are not intended for sensitive data."
@@ -356,10 +356,10 @@
       "id": 30,
       "question": "You need to allow an identity to list Pods only in a specific Namespace. What is the appropriate access setup?",
       "options": [
-        "A ClusterRoleBinding with admin permissions for the entire Cluster",
-        "A Role with get/list verbs on pods and a RoleBinding in that Namespace",
-        "Add a label named read-only to every Pod",
-        "Create a NetworkPolicy"
+        "A ClusterRoleBinding granting cluster-admin permissions across the whole Cluster",
+        "A Role allowing get/list on pods plus a RoleBinding in that Namespace",
+        "Adding a label named read-only to every Pod in the target Namespace",
+        "Creating a NetworkPolicy that permits only ingress from the API server"
       ],
       "correct": 1,
       "explanation": "A Role scopes permissions to one Namespace, and a RoleBinding associates those permissions with the identity in that Namespace. Cluster-admin is far too broad; labels and NetworkPolicy do not grant API read access."
@@ -370,10 +370,10 @@
     {
       "question": "Which Service type is typically paired with a StatefulSet for per-Pod DNS discovery?",
       "options": [
-        "LoadBalancer",
-        "Headless Service",
-        "ExternalName",
-        "NodePort"
+        "LoadBalancer Service for external cloud provider IPs",
+        "Headless Service for per-Pod DNS discovery",
+        "ExternalName Service that aliases an outside DNS name",
+        "NodePort Service exposing a static port on every node"
       ],
       "correct": 1
     },
@@ -420,10 +420,10 @@
     {
       "question": "What does a failing Readiness Probe typically affect?",
       "options": [
-        "Whether the Pod receives Service traffic",
-        "Whether etcd is compacted",
-        "Whether the Node is cordoned",
-        "Whether the Namespace is deleted"
+        "Whether the Pod may receive traffic from matching Services",
+        "Whether etcd needs to run a compaction and defragmentation cycle now",
+        "Whether the Node should be cordoned and drained by an administrator",
+        "Whether the Namespace containing the Pod should be deleted entirely"
       ],
       "correct": 0
     }

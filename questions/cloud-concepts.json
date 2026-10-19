@@ -8,10 +8,10 @@
       "id": 1,
       "question": "What is the AWS Well-Architected Framework's primary purpose?",
       "options": [
-        "To provide guidance on building secure, high-performing, resilient, and efficient infrastructure",
-        "To automatically configure AWS resources",
-        "To reduce AWS costs only",
-        "To create virtual machines"
+        "Guidance for building secure, high-performing, resilient, efficient infrastructure",
+        "Automatically provisioning and configuring every AWS resource without human input",
+        "Focusing exclusively on lowering monthly AWS bills with no other architectural goals",
+        "Creating and managing virtual machines as the framework's only intended deliverable"
       ],
       "correct": 0,
       "explanation": "The AWS Well-Architected Framework helps cloud architects build secure, high-performing, resilient, and efficient infrastructure."
@@ -32,10 +32,10 @@
       "id": 3,
       "question": "What does \"elasticity\" mean in cloud computing?",
       "options": [
-        "The ability to stretch physical hardware",
+        "Physically stretching racks and cables inside a traditional data center",
         "The ability to automatically scale resources up or down based on demand",
-        "The flexibility of AWS pricing",
-        "The durability of data storage"
+        "Choosing flexible payment plans without changing resource capacity",
+        "Keeping stored objects durable across multiple Availability Zones"
       ],
       "correct": 1,
       "explanation": "Elasticity is the ability to acquire resources as you need them and release them when you no longer need them, scaling automatically with demand."
@@ -68,10 +68,10 @@
       "id": 6,
       "question": "What is the AWS Shared Responsibility Model?",
       "options": [
-        "AWS is responsible for everything",
-        "Customers are responsible for everything",
-        "AWS is responsible for security OF the cloud, customers are responsible for security IN the cloud",
-        "AWS and customers share all responsibilities equally"
+        "AWS alone is responsible for securing every layer of every customer workload",
+        "Customers alone are responsible for securing all infrastructure and applications",
+        "AWS secures the cloud infrastructure; customers secure what they run in it",
+        "AWS and customers always split every security task in exactly equal halves"
       ],
       "correct": 2,
       "explanation": "AWS manages security OF the cloud (infrastructure), while customers manage security IN the cloud (data, applications, configurations)."
@@ -92,10 +92,10 @@
       "id": 8,
       "question": "What does \"high availability\" mean in AWS?",
       "options": [
-        "Resources are available only during business hours",
-        "Systems are designed to operate continuously without failure for a long time",
-        "Resources are expensive",
-        "Resources are fast"
+        "Making resources reachable only during standard weekday business hours",
+        "Designing systems to keep operating continuously with minimal downtime",
+        "Selecting the most expensive instance types available in every AWS Region",
+        "Optimizing only for the lowest possible latency with no uptime objectives"
       ],
       "correct": 1,
       "explanation": "High availability means designing systems to operate continuously without failure for a designated period, often using multiple Availability Zones."
@@ -104,10 +104,10 @@
       "id": 9,
       "question": "What is an AWS Region?",
       "options": [
-        "A single data center",
+        "A single physical data center building in one metropolitan area",
         "A geographic area that contains multiple Availability Zones",
-        "A type of EC2 instance",
-        "A pricing tier"
+        "A specific EC2 instance family optimized for memory-intensive work",
+        "A support or billing tier that determines which features you can use"
       ],
       "correct": 1,
       "explanation": "An AWS Region is a geographic area that contains multiple physically separated Availability Zones, providing fault tolerance and stability."
@@ -116,10 +116,10 @@
       "id": 10,
       "question": "What is an AWS Availability Zone?",
       "options": [
-        "A pricing zone",
+        "A pricing boundary that changes service rates based on geographic location",
         "One or more discrete data centers with redundant power, networking, and connectivity",
-        "A security feature",
-        "A type of storage"
+        "An IAM policy feature that restricts which users can launch cloud resources",
+        "A storage class reserved only for infrequently accessed long-term archive objects"
       ],
       "correct": 1,
       "explanation": "An Availability Zone consists of one or more discrete data centers, each with redundant power, networking, and connectivity, housed in separate facilities."
@@ -140,10 +140,10 @@
       "id": 12,
       "question": "What is the principle of \"loose coupling\" in cloud architecture?",
       "options": [
-        "Components are tightly integrated",
+        "Designing components so they share state and fail together as one unit",
         "Components are designed to have minimal dependencies on each other",
-        "Components must all be in the same Region",
-        "Components share the same database"
+        "Requiring every application component to run inside the same AWS Region",
+        "Forcing all microservices to read and write the same shared database"
       ],
       "correct": 1,
       "explanation": "Loose coupling means designing components with minimal dependencies, so changes or failures in one component don't cascade to others."
@@ -176,10 +176,10 @@
       "id": 15,
       "question": "In the context of AWS, what does \"scaling out\" refer to?",
       "options": [
-        "Increasing the size of existing instances",
-        "Adding more instances to handle increased load",
-        "Removing unused resources",
-        "Moving to a different region"
+        "Increasing CPU and memory on existing instances to handle more load",
+        "Adding more instances to distribute and handle increased workload",
+        "Removing idle or unused resources to reduce monthly cloud spending",
+        "Migrating the entire application stack into a different AWS Region"
       ],
       "correct": 1,
       "explanation": "Scaling out (horizontal scaling) means adding more instances to distribute the workload, rather than making existing instances larger."
@@ -212,10 +212,10 @@
       "id": 18,
       "question": "Under the Shared Responsibility Model, who is responsible for patching the guest operating system?",
       "options": [
-        "AWS for all services",
-        "Customer for IaaS services like EC2",
-        "AWS and customer together",
-        "Neither, it happens automatically"
+        "AWS patches the guest OS automatically for every service including EC2",
+        "The customer patches the guest OS for IaaS services such as EC2",
+        "AWS and the customer must jointly approve every guest OS patch together",
+        "Guest OS patching is unnecessary because it always happens with zero action"
       ],
       "correct": 1,
       "explanation": "For IaaS services like EC2, customers are responsible for patching the guest OS. For managed services, AWS handles this."
@@ -224,10 +224,10 @@
       "id": 19,
       "question": "Which statement best describes cloud computing?",
       "options": [
-        "On-demand delivery of IT resources via the internet with pay-as-you-go pricing",
-        "Managing your own data centers",
-        "Using only open-source software",
-        "Storing all data on local hard drives"
+        "On-demand IT resources delivered over the internet with pay-as-you-go pricing",
+        "Buying and operating your own physical data centers and server hardware",
+        "Restricting all workloads to free open-source software packages exclusively",
+        "Keeping every byte of application data exclusively on local hard drives"
       ],
       "correct": 0,
       "explanation": "Cloud computing is the on-demand delivery of compute power, database, storage, and other IT resources through the internet with pay-as-you-go pricing."
@@ -236,10 +236,10 @@
       "id": 20,
       "question": "What does fault tolerance mean in AWS architecture?",
       "options": [
-        "The system never fails",
+        "Guaranteeing that no component in the system can ever experience failure",
         "The system can continue operating despite component failures",
-        "The system is immune to attacks",
-        "The system has no bugs"
+        "Making the architecture completely immune to all forms of cyber attack",
+        "Ensuring the application source code contains absolutely no software bugs"
       ],
       "correct": 1,
       "explanation": "Fault tolerance means the system can continue to operate properly even when some of its components fail, often through redundancy."
@@ -280,20 +280,20 @@
     {
       "question": "Which type of scaling adds more instances rather than more power?",
       "options": [
-        "Vertical scaling",
-        "Horizontal scaling",
-        "Diagonal scaling",
-        "Linear scaling"
+        "Vertical scaling by enlarging CPU and memory on existing instances",
+        "Horizontal scaling by adding more instances to share the load",
+        "Diagonal scaling by mixing vertical and horizontal techniques randomly",
+        "Linear scaling by increasing capacity in fixed predetermined increments"
       ],
       "correct": 1
     },
     {
       "question": "What advantage of cloud computing refers to reducing time to provision resources?",
       "options": [
-        "Economies of scale",
-        "Go global in minutes",
-        "Increase speed and agility",
-        "Stop guessing capacity"
+        "Benefit from massive economies of scale that lower unit costs",
+        "Go global in minutes by deploying applications worldwide quickly",
+        "Increase speed and agility when provisioning resources for teams",
+        "Stop guessing capacity by scaling up or down based on real demand"
       ],
       "correct": 2
     }

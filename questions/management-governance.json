@@ -8,10 +8,10 @@
       "id": 1,
       "question": "What is AWS CloudFormation?",
       "options": [
-        "A monitoring service",
+        "A metrics collection service that monitors CPU and memory usage",
         "Infrastructure as Code service for provisioning resources using templates",
-        "A database service",
-        "A security service"
+        "A managed relational database for storing application configuration",
+        "An identity service that controls user access with policies and roles"
       ],
       "correct": 1,
       "explanation": "AWS CloudFormation allows you to model and provision AWS resources using templates (Infrastructure as Code)."
@@ -20,10 +20,10 @@
       "id": 2,
       "question": "What is Amazon CloudWatch?",
       "options": [
-        "A security service",
+        "A service that encrypts data at rest using customer-managed keys",
         "A monitoring and observability service for AWS resources and applications",
-        "A storage service",
-        "A database service"
+        "An object storage service for durable file and backup retention",
+        "A NoSQL database optimized for low-latency key-value lookups"
       ],
       "correct": 1,
       "explanation": "Amazon CloudWatch monitors AWS resources and applications, collecting and tracking metrics, logs, and events."
@@ -32,10 +32,10 @@
       "id": 3,
       "question": "What does AWS Systems Manager provide?",
       "options": [
-        "Only monitoring capabilities",
+        "Dashboards and alarms focused only on application performance metrics",
         "Operational insights and management capabilities for AWS resources",
-        "Only backup services",
-        "Only security features"
+        "Automated snapshot and restore features limited to database backups",
+        "Firewall and encryption controls without any operational automation"
       ],
       "correct": 1,
       "explanation": "AWS Systems Manager provides operational data, automates tasks, and helps manage EC2 instances and on-premises servers."
@@ -44,10 +44,10 @@
       "id": 4,
       "question": "What is AWS Config?",
       "options": [
-        "A compute service",
+        "A service that launches and scales virtual machine instances on demand",
         "A service that tracks resource configurations and changes over time",
-        "A storage service",
-        "A networking service"
+        "A durable object store for archives, backups, and static content",
+        "A DNS and traffic routing service for global application endpoints"
       ],
       "correct": 1,
       "explanation": "AWS Config continuously monitors and records AWS resource configurations and allows you to assess compliance."
@@ -56,10 +56,10 @@
       "id": 5,
       "question": "What is AWS CloudTrail used for?",
       "options": [
-        "Monitoring application performance",
-        "Logging and monitoring API calls and account activity",
-        "Managing databases",
-        "Storing files"
+        "Collecting detailed application performance metrics such as latency, errors, and throughput",
+        "Logging and monitoring API calls and account activity for auditing",
+        "Provisioning, patching, and scaling managed relational database instances",
+        "Uploading, versioning, and retrieving files from durable object storage buckets"
       ],
       "correct": 1,
       "explanation": "AWS CloudTrail logs API calls and account activity, providing audit trails for governance, compliance, and operational auditing."
@@ -68,10 +68,10 @@
       "id": 6,
       "question": "What is AWS Trusted Advisor?",
       "options": [
-        "A database optimization tool",
+        "A query optimizer that rewrites SQL for faster database performance",
         "A service providing real-time guidance on AWS best practices",
-        "A code deployment tool",
-        "A storage service"
+        "A CI/CD pipeline that builds and deploys application source code",
+        "A cold archive storage class for infrequently accessed backup data"
       ],
       "correct": 1,
       "explanation": "AWS Trusted Advisor provides real-time guidance to help you provision resources following AWS best practices."
@@ -80,10 +80,10 @@
       "id": 7,
       "question": "What are the five categories of Trusted Advisor checks?",
       "options": [
-        "Security, Storage, Database, Network, Compute",
+        "Security, Storage, Database, Network, and Compute resource categories",
         "Cost Optimization, Performance, Security, Fault Tolerance, Service Limits",
-        "Monitoring, Logging, Backup, Recovery, Compliance",
-        "Identity, Access, Network, Application, Data"
+        "Monitoring, Logging, Backup, Recovery, and Compliance operational areas",
+        "Identity, Access, Network, Application, and Data protection domains"
       ],
       "correct": 1,
       "explanation": "Trusted Advisor checks five categories: Cost Optimization, Performance, Security, Fault Tolerance, and Service Limits."
@@ -92,10 +92,10 @@
       "id": 8,
       "question": "What is AWS Organizations used for?",
       "options": [
-        "Monitoring resources",
+        "Collecting and graphing resource metrics across a single account",
         "Centrally managing and governing multiple AWS accounts",
-        "Deploying applications",
-        "Storing data"
+        "Uploading application packages and managing container deployments",
+        "Storing unstructured objects with versioning and lifecycle policies"
       ],
       "correct": 1,
       "explanation": "AWS Organizations helps you centrally manage and govern your environment as you scale AWS resources."
@@ -104,10 +104,10 @@
       "id": 9,
       "question": "What is AWS Service Catalog?",
       "options": [
-        "A list of all AWS services",
+        "A public directory listing every AWS product and regional offering",
         "A service to create and manage catalogs of approved IT services",
-        "A pricing tool",
-        "A monitoring service"
+        "A calculator that estimates monthly spend before you deploy resources",
+        "A dashboard that graphs CPU, memory, and disk metrics over time"
       ],
       "correct": 1,
       "explanation": "AWS Service Catalog allows organizations to create and manage catalogs of IT services approved for use on AWS."
@@ -116,10 +116,10 @@
       "id": 10,
       "question": "What is AWS Personal Health Dashboard?",
       "options": [
-        "A fitness tracking app",
-        "A dashboard providing alerts and guidance when AWS events might affect your resources",
-        "A cost monitoring tool",
-        "A security tool"
+        "A consumer wellness application for tracking personal fitness and health goals",
+        "A dashboard with alerts when AWS events might affect your resources",
+        "A forecasting tool that projects monthly spend and sends budget threshold alerts",
+        "A vulnerability scanner that finds misconfigured security groups and open ports"
       ],
       "correct": 1,
       "explanation": "AWS Personal Health Dashboard provides alerts and remediation guidance when AWS events might impact your specific resources."
@@ -128,10 +128,10 @@
       "id": 11,
       "question": "What is AWS Control Tower?",
       "options": [
-        "A monitoring tower",
-        "A service to set up and govern a secure, multi-account AWS environment",
-        "A networking service",
-        "A storage service"
+        "A physical observation deck used for monitoring on-premises data center floors",
+        "A service to set up and govern a secure multi-account AWS environment",
+        "A virtual private network that connects branch offices to AWS Regions securely",
+        "An object storage class optimized for infrequent long-term archive retrieval"
       ],
       "correct": 1,
       "explanation": "AWS Control Tower provides the easiest way to set up and govern a secure, multi-account AWS environment based on best practices."
@@ -140,10 +140,10 @@
       "id": 12,
       "question": "What is Amazon EventBridge?",
       "options": [
-        "A database service",
+        "A managed SQL database that scales storage automatically with demand",
         "A serverless event bus for connecting applications using events",
-        "A storage service",
-        "A compute service"
+        "A durable file system that multiple containers can mount concurrently",
+        "A serverless function runtime that executes code in response to HTTP"
       ],
       "correct": 1,
       "explanation": "Amazon EventBridge is a serverless event bus that makes it easy to connect applications using data from your own apps, SaaS, and AWS services."
@@ -176,10 +176,10 @@
       "id": 15,
       "question": "What does Amazon CloudWatch Logs do?",
       "options": [
-        "Only monitors EC2 instances",
+        "Collecting only EC2 CPU metrics without storing application log data",
         "Collects and stores log files from AWS services and applications",
-        "Only tracks billing",
-        "Only monitors databases"
+        "Tracking only invoice line items and forecasted monthly AWS spend",
+        "Monitoring only relational database replication lag and storage growth"
       ],
       "correct": 1,
       "explanation": "CloudWatch Logs enables you to centralize logs from all your systems, applications, and AWS services in a single service."
@@ -188,10 +188,10 @@
       "id": 16,
       "question": "What is AWS Service Catalog used for?",
       "options": [
-        "Listing all AWS services",
-        "Creating and managing catalogs of approved IT services",
-        "Monitoring resources",
-        "Backing up data"
+        "Publishing a browsable public index of every AWS service and feature name",
+        "Creating and managing catalogs of approved IT services for self-service",
+        "Graphing resource utilization metrics across multiple Regions and accounts",
+        "Automatically snapshotting EBS volumes on a recurring nightly backup schedule"
       ],
       "correct": 1,
       "explanation": "AWS Service Catalog allows organizations to create and manage catalogs of IT services that are approved for use on AWS."
@@ -212,10 +212,10 @@
       "id": 18,
       "question": "What does AWS Systems Manager Session Manager allow you to do?",
       "options": [
-        "Only monitor instances",
+        "Viewing CloudWatch metrics for instances without interactive access",
         "Securely connect to EC2 instances without SSH keys or bastion hosts",
-        "Only create backups",
-        "Only manage billing"
+        "Creating AMI snapshots and restoring instances from backup images",
+        "Generating consolidated invoices and allocating costs by cost center"
       ],
       "correct": 1,
       "explanation": "Session Manager provides secure and auditable instance management without needing to open inbound ports, maintain bastion hosts, or manage SSH keys."
@@ -260,10 +260,10 @@
     {
       "question": "What are the five categories of AWS Trusted Advisor checks?",
       "options": [
-        "Security, Compliance, Monitoring, Logging, Backup",
+        "Security, Compliance, Monitoring, Logging, and Backup operational categories",
         "Cost Optimization, Performance, Security, Fault Tolerance, Service Limits",
-        "Compute, Storage, Database, Network, Application",
-        "Identity, Access, Data, Infrastructure, Applications"
+        "Compute, Storage, Database, Network, and Application technology categories",
+        "Identity, Access, Data, Infrastructure, and Applications governance domains"
       ],
       "correct": 1
     },
@@ -280,10 +280,10 @@
     {
       "question": "What does AWS Organizations provide?",
       "options": [
-        "Single account management",
-        "Centralized multi-account management",
-        "Monitoring only",
-        "Storage services"
+        "Managing only a single AWS account with no organization structure",
+        "Centralized multi-account management with consolidated billing",
+        "Collecting metrics and logs without any account administration features",
+        "Providing object and block storage without governance capabilities"
       ],
       "correct": 1
     },

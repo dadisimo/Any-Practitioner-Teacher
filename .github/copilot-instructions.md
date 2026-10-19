@@ -122,6 +122,7 @@ In your PR description, include:
 - All questions must be factually accurate and relevant to the subject being studied.
 - Explanations should be educational — not just "the answer is X" but WHY it's correct.
 - Wrong options should be plausible. Avoid obviously absurd distractors.
+- **Balance option lengths.** Do not make the correct answer systematically the longest. Distractors should be roughly similar in length and specificity to the correct option (e.g. avoid pairing a full definition with short labels like "A database service"). Across a section, the uniquely longest option should be correct roughly ~25% of the time (near chance for 4 options), not the majority of questions.
 - Each section should have at least 5 `followUpQuestions`.
 - Documentation HTML should be well-structured and comprehensive.
 

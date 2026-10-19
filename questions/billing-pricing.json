@@ -8,10 +8,10 @@
       "id": 1,
       "question": "What is the AWS Free Tier?",
       "options": [
-        "Free AWS services forever",
+        "Unlimited free access to every AWS service with no usage caps forever",
         "Limited free usage of services for 12 months plus always-free services",
-        "A discount program for students only",
-        "Free support from AWS"
+        "A scholarship-style discount available exclusively to verified students",
+        "Round-the-clock free premium support from AWS technical account managers"
       ],
       "correct": 1,
       "explanation": "AWS Free Tier includes 12 months of free tier services, always-free services, and short-term free trials for certain services."
@@ -20,10 +20,10 @@
       "id": 2,
       "question": "What are the three AWS pricing models?",
       "options": [
-        "Hourly, Daily, Monthly",
+        "Billing only by the hour, day, or calendar month with no other options",
         "Pay-as-you-go, Save when you reserve, Pay less by using more",
-        "Free, Standard, Premium",
-        "Basic, Professional, Enterprise"
+        "Three fixed subscription tiers named Free, Standard, and Premium",
+        "License packs labeled Basic, Professional, and Enterprise only"
       ],
       "correct": 1,
       "explanation": "AWS uses three pricing models: Pay-as-you-go (on-demand), Save when you reserve (Reserved Instances), and Pay less by using more (volume discounts)."
@@ -33,9 +33,9 @@
       "question": "What is AWS Cost Explorer?",
       "options": [
         "A tool to visualize and manage AWS costs and usage over time",
-        "A service to deploy applications",
-        "A monitoring service",
-        "A security service"
+        "A platform service that builds and deploys application packages",
+        "A metrics dashboard focused on CPU, memory, and network health",
+        "An identity and access service that manages users, roles, and policies"
       ],
       "correct": 0,
       "explanation": "AWS Cost Explorer helps you visualize, understand, and manage AWS costs and usage over time with custom reports."
@@ -44,10 +44,10 @@
       "id": 4,
       "question": "What are Reserved Instances?",
       "options": [
-        "Instances that are always running",
-        "A commitment to use EC2 for 1 or 3 years in exchange for significant discounts",
-        "Backup instances",
-        "Free instances"
+        "On-demand instances that must remain running twenty-four hours every day",
+        "A 1- or 3-year EC2 commitment in exchange for significant discounts",
+        "Idle standby instances kept solely as disaster-recovery backup capacity",
+        "Complimentary trial instances with no charge under any usage circumstance"
       ],
       "correct": 1,
       "explanation": "Reserved Instances provide up to 75% discount compared to On-Demand pricing in exchange for a 1 or 3-year commitment."
@@ -56,10 +56,10 @@
       "id": 5,
       "question": "What are Spot Instances?",
       "options": [
-        "Premium instances with guaranteed availability",
+        "Guaranteed high-priority instances with fixed capacity reservations forever",
         "Unused EC2 capacity available at up to 90% discount",
-        "Free instances",
-        "Instances for testing only"
+        "Completely free instances with no interruption and no usage charges",
+        "Sandbox-only instances restricted to development and QA environments"
       ],
       "correct": 1,
       "explanation": "Spot Instances let you take advantage of unused EC2 capacity at discounts up to 90%, but can be interrupted with 2-minute notice."
@@ -68,10 +68,10 @@
       "id": 6,
       "question": "What is AWS Budgets?",
       "options": [
-        "A financial planning service",
+        "A corporate FP&A suite for company-wide financial planning and forecasting",
         "A tool to set custom cost and usage budgets with alerts",
-        "A payment method",
-        "A discount program"
+        "A payment method such as credit card or invoice terms for settling bills",
+        "An automatic coupon program that applies random percentage discounts"
       ],
       "correct": 1,
       "explanation": "AWS Budgets allows you to set custom budgets that alert you when costs or usage exceed (or are forecasted to exceed) your budgeted amount."
@@ -92,10 +92,10 @@
       "id": 8,
       "question": "What is the AWS Pricing Calculator?",
       "options": [
-        "A tool to estimate AWS costs for your use case",
-        "A payment processing tool",
-        "A monitoring service",
-        "A billing report"
+        "A tool to estimate AWS costs for your use case before you deploy",
+        "A payment gateway that processes customer credit card transactions",
+        "A metrics service that graphs resource utilization across accounts",
+        "A monthly PDF invoice summarizing charges without usage detail"
       ],
       "correct": 0,
       "explanation": "AWS Pricing Calculator helps you estimate costs for AWS services based on your expected usage patterns."
@@ -104,10 +104,10 @@
       "id": 9,
       "question": "What are AWS Organizations volume discounts?",
       "options": [
-        "Discounts for individuals",
-        "Consolidated billing that can result in volume discounts across accounts",
-        "Discounts for small businesses only",
-        "No volume discounts available"
+        "Percentage-off rates available only to individual personal AWS accounts",
+        "Consolidated billing that can yield volume discounts across accounts",
+        "Special discounted rates reserved exclusively for registered small businesses",
+        "A documented policy stating AWS never offers any volume-based rate reductions"
       ],
       "correct": 1,
       "explanation": "AWS Organizations allows consolidated billing, pooling usage across accounts to reach volume discount tiers faster."
@@ -116,10 +116,10 @@
       "id": 10,
       "question": "What is AWS Cost and Usage Report?",
       "options": [
-        "A summary email",
+        "A short weekly email summarizing approximate account spend only",
         "The most comprehensive set of cost and usage data available",
-        "A monthly invoice",
-        "A cost prediction tool"
+        "A single monthly invoice PDF without line-item usage details",
+        "A machine-learning tool that guesses future costs without raw data"
       ],
       "correct": 1,
       "explanation": "AWS Cost and Usage Report provides the most comprehensive cost and usage data, including detailed line items and custom tags."
@@ -128,10 +128,10 @@
       "id": 11,
       "question": "What is included in the AWS Free Tier for EC2?",
       "options": [
-        "Unlimited instances",
+        "Unlimited EC2 instance hours of any size with no monthly caps",
         "750 hours per month of t2.micro or t3.micro instances for 12 months",
-        "One year of any instance type",
-        "EC2 is not included in Free Tier"
+        "One full year of unrestricted use of any EC2 instance family and size",
+        "No EC2 coverage at all because compute is excluded from Free Tier"
       ],
       "correct": 1,
       "explanation": "AWS Free Tier includes 750 hours per month of Linux or Windows t2.micro (or t3.micro in some regions) instances for 12 months."
@@ -140,10 +140,10 @@
       "id": 12,
       "question": "How does AWS charge for S3?",
       "options": [
-        "Flat monthly fee",
+        "A single flat monthly fee regardless of how much you store or transfer",
         "Based on storage used, requests made, and data transfer",
-        "Only based on storage used",
-        "S3 is always free"
+        "Charges only for gigabytes stored with free requests and free transfer",
+        "Completely free forever with no charges for any S3 usage pattern"
       ],
       "correct": 1,
       "explanation": "S3 charges based on: storage amount (GB-month), number of requests (PUT, GET), and data transfer out of S3."
@@ -188,10 +188,10 @@
       "id": 16,
       "question": "What is a benefit of AWS consolidated billing?",
       "options": [
-        "Separate invoices for each account",
+        "Receiving completely separate invoices for every linked member account",
         "Combined usage across accounts for potential volume discounts",
-        "Automatic cost reduction",
-        "Free AWS support"
+        "Automatic reduction of every service price without any configuration",
+        "Receiving free Business or Enterprise AWS support for all accounts"
       ],
       "correct": 1,
       "explanation": "Consolidated billing combines usage across all accounts in an organization, helping you reach volume discount tiers faster."
@@ -200,10 +200,10 @@
       "id": 17,
       "question": "Which AWS service is always free (not time-limited)?",
       "options": [
-        "Amazon EC2 t2.micro",
-        "AWS Lambda (within limits)",
-        "Amazon RDS",
-        "Amazon S3 (all storage)"
+        "Amazon EC2 t2.micro instances for the first twelve months only",
+        "AWS Lambda free requests within monthly always-free limits",
+        "Amazon RDS database instances of any size without time limits",
+        "Amazon S3 storage of any volume with no charges at any tier"
       ],
       "correct": 1,
       "explanation": "AWS Lambda includes 1 million free requests per month permanently, not limited to 12 months like some Free Tier offerings."
@@ -236,10 +236,10 @@
       "id": 20,
       "question": "Which pricing model requires you to commit to a specific instance type and region?",
       "options": [
-        "On-Demand",
-        "Spot Instances",
-        "Standard Reserved Instances",
-        "Savings Plans"
+        "On-Demand pricing with no upfront commitment of any kind",
+        "Spot Instances that use spare capacity at deep discounts",
+        "Standard Reserved Instances tied to type, Region, and platform",
+        "Savings Plans that commit to a spend rate rather than instance type"
       ],
       "correct": 2,
       "explanation": "Standard Reserved Instances require commitment to instance type, region, and platform, offering the highest discount but least flexibility."
@@ -250,10 +250,10 @@
     {
       "question": "Which pricing model offers up to 75% discount for a 1 or 3-year commitment?",
       "options": [
-        "On-Demand",
-        "Reserved Instances",
-        "Spot Instances",
-        "Dedicated Hosts"
+        "On-Demand pricing paid by the second or hour with no commitment",
+        "Reserved Instances with a 1- or 3-year usage commitment",
+        "Spot Instances using spare capacity that may be interrupted",
+        "Dedicated Hosts that reserve an entire physical server for you"
       ],
       "correct": 1
     },
