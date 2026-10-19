@@ -40,15 +40,18 @@ If the source material is incomplete (e.g., questions without explanations, or j
 
 ### Step 5 — Format the Output
 
-Each question must follow this exact format:
+Questions may be **mcq** (default), **text**, or **code**. Mix formats when it improves learning — especially for interview/job-prep sections (scenarios, commands, short code).
+
+**Multiple choice (`type` omitted or `"mcq"`):**
 
 ```json
 {
   "id": <sequential_number>,
+  "type": "mcq",
   "question": "Question text here?",
   "options": [
     "Option A",
-    "Option B", 
+    "Option B",
     "Option C",
     "Option D"
   ],
@@ -57,13 +60,50 @@ Each question must follow this exact format:
 }
 ```
 
-Follow-up questions use a slightly simpler format (no `id` or `explanation`):
+**Open text (`"type": "text"`)** — logical / scenario answers:
 
 ```json
 {
-  "question": "Follow-up question text?",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "correct": <0-3>
+  "id": <sequential_number>,
+  "type": "text",
+  "question": "What would you check next?",
+  "scenario": "Optional setup context shown above the question.",
+  "hint": "Optional hint",
+  "acceptedAnswers": ["optional exact-ish phrases"],
+  "answerPatterns": ["optional regex"],
+  "keywords": [["all", "words"], ["or", "this", "group"]],
+  "modelAnswer": "Shown after a wrong attempt",
+  "explanation": "Why this is right / what good answers include."
+}
+```
+
+Grading: normalized match against `acceptedAnswers`, any `answerPatterns` regex, or any keyword group (AND within group, OR across groups). Provide at least one of those three.
+
+**Code (`"type": "code"`)** — commands or short programs:
+
+```json
+{
+  "id": <sequential_number>,
+  "type": "code",
+  "language": "python",
+  "question": "Write a function that…",
+  "starterCode": "def foo():\n    ",
+  "placeholder": "Optional placeholder",
+  "acceptedAnswers": ["…"],
+  "answerPatterns": ["…"],
+  "modelAnswer": "…",
+  "explanation": "…"
+}
+```
+
+Follow-up questions support the same types (`mcq` / `text` / `code`) and should include `explanation` for open answers.
+
+```json
+{
+  "type": "text",
+  "question": "Follow-up?",
+  "acceptedAnswers": ["…"],
+  "explanation": "…"
 }
 ```
 
@@ -77,9 +117,48 @@ The complete section JSON file format is:
   "description": "Brief description shown on the section card",
   "questions": [ ... ],
   "documentation": "<h3>Title</h3><p>HTML study content...</p>",
-  "followUpQuestions": [ ... ]
+  "followUpQuestions": [ ... ],
+  "tutorial": {
+    "intro": "Short hook shown on the Learn path",
+    "levels": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "badge": "🌱",
+        "minutes": 15,
+        "tagline": "One-line promise",
+        "html": "<p>Teaching HTML…</p>"
+      },
+      {
+        "id": "advanced",
+        "title": "Advanced",
+        "badge": "🚀",
+        "minutes": 20,
+        "tagline": "…",
+        "html": "…"
+      },
+      {
+        "id": "expert",
+        "title": "Expert",
+        "badge": "🏆",
+        "minutes": 20,
+        "tagline": "…",
+        "html": "…"
+      }
+    ],
+    "resources": [
+      {
+        "title": "Free resource name",
+        "url": "https://…",
+        "source": "Publisher",
+        "note": "Why a learner should open it"
+      }
+    ]
+  }
 }
 ```
+
+`tutorial` is **optional** but strongly recommended for job-prep / deep technical sections. Use engaging HTML (`tutorial-callout tip|lab|pitfall|interview`, `<pre>`, checklists). Always include real **free** external resources (official docs, well-known free courses). Levels must progress Basics → Advanced → Expert with enough depth to answer the section’s questions and build working fluency.
 
 ### Step 6 — Distribute Correct Answers
 
@@ -122,7 +201,8 @@ In your PR description, include:
 - All questions must be factually accurate and relevant to the subject being studied.
 - Explanations should be educational — not just "the answer is X" but WHY it's correct.
 - Wrong options should be plausible. Avoid obviously absurd distractors.
-- **Balance option lengths.** Do not make the correct answer systematically the longest. Distractors should be roughly similar in length and specificity to the correct option (e.g. avoid pairing a full definition with short labels like "A database service"). Across a section, the uniquely longest option should be correct roughly ~25% of the time (near chance for 4 options), not the majority of questions.
+- **Balance option lengths** (MCQ only). Do not make the correct answer systematically the longest. Distractors should be roughly similar in length and specificity to the correct option (e.g. avoid pairing a full definition with short labels like "A database service"). Across a section, the uniquely longest option should be correct roughly ~25% of the time (near chance for 4 options), not the majority of questions.
+- **Prefer mixed formats for job-prep / deep technical sections:** include scenario `text` questions and short `code` prompts alongside MCQs so learners practice explanation and tooling, not only recognition.
 - Each section should have at least 5 `followUpQuestions`.
 - Documentation HTML should be well-structured and comprehensive.
 

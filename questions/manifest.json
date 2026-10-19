@@ -1,12 +1,19 @@
 {
   "files": [
     "billing-pricing.json",
+    "cicd-devops-sdk.json",
     "cloud-concepts.json",
+    "concurrency-distributed-testing.json",
     "kubernetes-advanced.json",
     "kubernetes-fundamentals.json",
+    "linux-systems-verification.json",
     "management-governance.json",
+    "networking-l2-l3.json",
+    "python-cpp-verification.json",
+    "sdk-verification-automation.json",
     "security-compliance.json",
-    "technology-services.json"
+    "technology-services.json",
+    "verification-leadership.json"
   ],
-  "generated": "2026-10-18T08:23:25.433Z"
+  "generated": "2026-10-19T09:03:09.485Z"
 }

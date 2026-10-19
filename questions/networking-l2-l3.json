@@ -1,0 +1,357 @@
+{
+  "id": "networking-l2-l3",
+  "title": "Networking L2 / L3",
+  "icon": "🌐",
+  "description": "Scenario, command, and concept drills for Ethernet, IP routing, and NIC verification",
+  "questions": [
+    {
+      "id": 1,
+      "type": "text",
+      "question": "A host can ping its default gateway but cannot reach 8.8.8.8. Name the MOST likely layer where the problem sits, and one concrete thing you would check next.",
+      "hint": "Answer like: \"Layer X — check …\"",
+      "keywords": [
+        [
+          "layer 3",
+          "route"
+        ],
+        [
+          "l3",
+          "route"
+        ],
+        [
+          "layer 3",
+          "gateway"
+        ],
+        [
+          "network",
+          "routing"
+        ]
+      ],
+      "acceptedAnswers": [
+        "layer 3"
+      ],
+      "modelAnswer": "Layer 3 — check the default route / upstream connectivity beyond the gateway (traceroute, ISP/link).",
+      "explanation": "Local gateway reachability means L2/L3 to the gateway likely works. Failure beyond that points to routing upstream, ACLs, or WAN issues."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "question": "What does an ARP request primarily resolve?",
+      "options": [
+        "A hostname to an IPv4 address via recursive DNS",
+        "An IPv4 address to a MAC address on the local link",
+        "A TCP port to the owning process on Linux",
+        "A VLAN ID to a spanning-tree root bridge"
+      ],
+      "correct": 1,
+      "explanation": "ARP maps IPv4 → MAC so Ethernet can deliver the frame on the local segment."
+    },
+    {
+      "id": 3,
+      "type": "code",
+      "language": "bash",
+      "question": "Write a tcpdump command that captures only ICMP traffic on interface eth0 and prints packets verbosely.",
+      "placeholder": "tcpdump ...",
+      "acceptedAnswers": [
+        "tcpdump -i eth0 icmp -v",
+        "tcpdump -i eth0 -v icmp",
+        "sudo tcpdump -i eth0 icmp -v",
+        "tcpdump -vi eth0 icmp"
+      ],
+      "answerPatterns": [
+        "tcpdump(?=.*-i\\s*eth0)(?=.*icmp)(?=.*-v)",
+        "tcpdump(?=.*-vi\\s*eth0)(?=.*icmp)",
+        "tcpdump(?=.*-iv\\s*eth0)(?=.*icmp)"
+      ],
+      "modelAnswer": "tcpdump -i eth0 -v icmp",
+      "explanation": "Interface selection (-i), ICMP filter, and verbose (-v) are the key pieces for this capture."
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "question": "Two servers in the same VLAN cannot communicate. ethtool shows both links are UP. Switches show the correct MAC on each port. What protocol mapping would you verify next on the hosts, and why?",
+      "keywords": [
+        [
+          "arp"
+        ],
+        [
+          "mac"
+        ],
+        [
+          "neighbor"
+        ]
+      ],
+      "modelAnswer": "Check ARP/neighbor tables — verify each host has the correct IP→MAC mapping (stale/wrong ARP can break L3 on a healthy L2 path).",
+      "explanation": "Healthy link + correct switch MAC learning suggests L2 is fine. Wrong or missing ARP entries are a classic next failure mode."
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "question": "How does a router differ from a Layer-2 switch when forwarding?",
+      "options": [
+        "Routers forward between IP subnets using routing tables; switches forward frames in a broadcast domain using MAC tables",
+        "Switches decrement IP TTL on every hop while routers never touch TTL",
+        "Routers only forward based on destination MAC addresses inside one VLAN",
+        "There is no difference once both devices enable jumbo frames"
+      ],
+      "correct": 0,
+      "explanation": "Switches bridge within an L2 domain; routers interconnect IP networks and make longest-prefix decisions."
+    },
+    {
+      "id": 6,
+      "type": "text",
+      "scenario": "Lab: Host A 10.0.1.10/24 gateway 10.0.1.1. Host B 10.0.2.20/24 gateway 10.0.2.1. Router connects both subnets. A ping from A to B fails. tcpdump on A shows ARP who-has 10.0.2.20 — not an ARP for the gateway.",
+      "question": "What is wrong with Host A’s networking configuration (one sentence)?",
+      "keywords": [
+        [
+          "route"
+        ],
+        [
+          "gateway"
+        ],
+        [
+          "default"
+        ]
+      ],
+      "answerPatterns": [
+        "(missing|no|wrong|bad).*(default\\s*route|gateway)",
+        "(default\\s*route|gateway).*(missing|absent|wrong|not\\s*set)"
+      ],
+      "modelAnswer": "Host A is missing (or ignoring) a default route to 10.0.1.1, so it ARPs for a remote IP as if it were local.",
+      "explanation": "ARPing for a remote subnet IP means the host thinks the destination is on-link — classic missing/incorrect default route or mask."
+    },
+    {
+      "id": 7,
+      "type": "code",
+      "language": "bash",
+      "question": "Using the ip command, show how you would add a default route via gateway 192.168.1.1 on Linux.",
+      "acceptedAnswers": [
+        "ip route add default via 192.168.1.1",
+        "ip route add 0.0.0.0/0 via 192.168.1.1",
+        "sudo ip route add default via 192.168.1.1"
+      ],
+      "answerPatterns": [
+        "ip\\s+route\\s+add\\s+(default|0\\.0\\.0\\.0/0)\\s+via\\s+192\\.168\\.1\\.1"
+      ],
+      "modelAnswer": "ip route add default via 192.168.1.1",
+      "explanation": "The modern iproute2 syntax installs a default route through the given next hop."
+    },
+    {
+      "id": 8,
+      "type": "mcq",
+      "question": "Why is RSS / flow hashing important when verifying multi-queue NICs?",
+      "options": [
+        "It steers packets across receive queues/CPUs; bad hashing causes imbalance or surprising reordering",
+        "It replaces BGP as the control plane in leaf-spine fabrics",
+        "It compresses Ethernet payloads before DMA into host memory",
+        "It forces every protocol onto a single CPU core for determinism"
+      ],
+      "correct": 0,
+      "explanation": "RSS distributes flows for parallelism. Verification must check balance, affinity, and correctness under multi-queue load."
+    },
+    {
+      "id": 9,
+      "type": "text",
+      "question": "In one sentence, explain what RDMA gives you that classic kernel TCP sockets usually do not.",
+      "keywords": [
+        [
+          "cpu"
+        ],
+        [
+          "memory"
+        ],
+        [
+          "latency"
+        ],
+        [
+          "bypass"
+        ],
+        [
+          "direct"
+        ]
+      ],
+      "modelAnswer": "RDMA enables low-latency remote memory access with far less CPU involvement than traditional kernel networking paths.",
+      "explanation": "RDMA/RoCE is about bypassing much of the traditional stack for HPC/AI fabrics — latency and CPU efficiency are the punchline."
+    },
+    {
+      "id": 10,
+      "type": "text",
+      "scenario": "Performance lab: enabling TSO doubles throughput to a peer, but a middlebox that rewrites packets starts dropping sessions only when TSO is on.",
+      "question": "What class of NIC feature is implicated, and what is your first A/B experiment?",
+      "keywords": [
+        [
+          "offload"
+        ],
+        [
+          "tso"
+        ]
+      ],
+      "modelAnswer": "Segmentation/checksum offloads — A/B by disabling TSO/GSO (and related offloads) with ethtool and retesting through the middlebox.",
+      "explanation": "Offloads change packet shape on the wire. Interop bugs often appear only when hardware segmentation is enabled."
+    },
+    {
+      "id": 11,
+      "type": "mcq",
+      "question": "What does a /24 IPv4 prefix length mean?",
+      "options": [
+        "The first 24 bits are the network; typically 256 addresses in the block",
+        "Exactly 24 hosts may exist on the subnet with no exceptions",
+        "Packets may traverse at most 24 routers before being discarded",
+        "The interface MTU must be set to 24 KB for that route"
+      ],
+      "correct": 0,
+      "explanation": "/24 ⇒ 255.255.255.0 ⇒ 8 host bits ⇒ 256 addresses including network/broadcast."
+    },
+    {
+      "id": 12,
+      "type": "code",
+      "language": "python",
+      "question": "Write a Python function `same_subnet(ip1, ip2, prefix)` that returns True if two dotted IPv4 strings are in the same subnet for the given prefix length (0–32). You may use the stdlib.",
+      "starterCode": "import ipaddress\n\ndef same_subnet(ip1, ip2, prefix):\n    ",
+      "acceptedAnswers": [
+        "return ipaddress.ip_interface(f\"{ip1}/{prefix}\").network == ipaddress.ip_interface(f\"{ip2}/{prefix}\").network",
+        "n = ipaddress.IPv4Network(f\"{ip1}/{prefix}\", strict=False)\nreturn ipaddress.IPv4Address(ip2) in n"
+      ],
+      "answerPatterns": [
+        "ipaddress\\.(ip_interface|IPv4Network|ip_network)",
+        "(ip1).*(prefix).*(ip2)|(network).*(in )"
+      ],
+      "modelAnswer": "return ipaddress.ip_interface(f\"{ip1}/{prefix}\").network == ipaddress.ip_interface(f\"{ip2}/{prefix}\").network",
+      "explanation": "Using ipaddress avoids hand-rolled masking bugs and is interview-friendly for networking tooling."
+    }
+  ],
+  "followUpQuestions": [
+    {
+      "type": "text",
+      "question": "Which OSI layer owns MAC addresses?",
+      "acceptedAnswers": [
+        "layer 2",
+        "l2",
+        "data link",
+        "data-link"
+      ],
+      "explanation": "MAC addresses are Layer 2 (Data Link) identifiers."
+    },
+    {
+      "type": "mcq",
+      "question": "Which protocol resolves IPv4 addresses to MAC addresses?",
+      "options": [
+        "DHCP",
+        "DNS",
+        "ARP",
+        "NTP"
+      ],
+      "correct": 2,
+      "explanation": "ARP performs IPv4→MAC resolution on the local link."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "question": "Write a command to display the kernel routing table using iproute2.",
+      "acceptedAnswers": [
+        "ip route",
+        "ip route show",
+        "ip r",
+        "ip route list"
+      ],
+      "answerPatterns": [
+        "^\\s*(sudo\\s+)?ip(\\s+route|\\s+r)(\\s+show|\\s+list)?\\s*$"
+      ],
+      "explanation": "ip route (show) prints the routing table."
+    },
+    {
+      "type": "text",
+      "question": "Name one reason TTL exists in IP packets.",
+      "keywords": [
+        [
+          "loop"
+        ],
+        [
+          "infinite"
+        ],
+        [
+          "forever"
+        ]
+      ],
+      "modelAnswer": "To prevent packets from looping forever in the network.",
+      "explanation": "TTL/hop limit bounds the lifetime of a packet in the presence of routing loops."
+    },
+    {
+      "type": "text",
+      "question": "RoCE is most closely associated with which capability?",
+      "acceptedAnswers": [
+        "rdma",
+        "remote direct memory access",
+        "rdma over converged ethernet"
+      ],
+      "keywords": [
+        [
+          "rdma"
+        ]
+      ],
+      "explanation": "RoCE carries RDMA over Converged Ethernet."
+    }
+  ],
+  "documentation": "<h3>Networking L2 / L3 for SDK Verification</h3>\n<p>Prepare to reason from symptoms (pcap, ARP, routes) to root cause — the daily skill for NIC/SDK verification.</p>\n<h4>Layer 2</h4>\n<ul><li>Ethernet, MAC learning, VLANs (802.1Q), ARP</li></ul>\n<h4>Layer 3</h4>\n<ul><li>Prefixes, default routes, ECMP, ICMP, BGP vs IGP</li></ul>\n<h4>Performance path</h4>\n<ul><li>MTU, offloads (TSO/GSO/GRO/checksum), RSS, RDMA/RoCE</li></ul>\n<h4>Toolbox</h4>\n<ul><li><code>ip</code>, <code>ethtool</code>, <code>tcpdump</code>/Wireshark, controlled A/B offload tests</li></ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Packets, MACs, ARP, and “why can’t I ping?”</li>\n<li><strong>Advanced:</strong> ECMP, MTU, TCP vs UDP, capture-driven debugging</li>\n<li><strong>Expert:</strong> NIC offloads, RSS, RDMA/RoCE — verification mindset</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://www.cloudflare.com/learning/network-layer/what-is-a-computer-network/\" target=\"_blank\" rel=\"noopener noreferrer\">Cloudflare Learning Center — Networking basics</a> — Clear free explainers for IP, DNS, TLS, CDN concepts.</li><li><a href=\"https://www.practicalnetworking.net/\" target=\"_blank\" rel=\"noopener noreferrer\">Practical Networking</a> — Excellent free subnetting &amp; packet-flow lessons.</li><li><a href=\"https://www.wireshark.org/docs/\" target=\"_blank\" rel=\"noopener noreferrer\">Wireshark University / Official docs</a> — Learn capture filters and protocol decoding hands-on.</li></ul>",
+  "tutorial": {
+    "intro": "Build networking intuition the way NIC/SDK teams use it: frames and MACs first, then routes and troubleshooting, then offloads/RDMA performance paths.",
+    "levels": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "badge": "🌱",
+        "minutes": 24,
+        "tagline": "Packets, MACs, ARP, and “why can’t I ping?”",
+        "html": "\n<p>Start with a mental model: <strong>apps talk to sockets → IP delivers between networks → Ethernet delivers on a link</strong>.</p>\n<h4>Layer 2 in practice</h4>\n<ul>\n<li><strong>MAC address:</strong> hardware identity on a NIC port.</li>\n<li><strong>Switch:</strong> learns source MACs, forwards/filters/floods by destination MAC.</li>\n<li><strong>VLAN (802.1Q):</strong> tag that splits one physical LAN into logical broadcast domains.</li>\n<li><strong>ARP:</strong> “Who has 10.0.0.5? Tell 10.0.0.9” → maps IPv4 → MAC on the local subnet.</li>\n</ul>\n<h4>Layer 3 in practice</h4>\n<ul>\n<li><strong>IP + prefix:</strong> <code>/24</code> means first 24 bits are network; hosts share that prefix.</li>\n<li><strong>Default gateway:</strong> next hop when the destination is not on-link.</li>\n<li><strong>Router:</strong> forwards between subnets using a routing table (longest prefix match).</li>\n<li><strong>ICMP ping:</strong> cheap reachability + RTT check, not a full app test.</li>\n</ul>\n<div class=\"tutorial-callout tip\"><strong>Remember</strong><p>If you can ping the gateway but not the internet, L2 to the gateway is probably fine — look upstream (routes, WAN, DNS separately).</p></div>\n<div class=\"tutorial-callout lab\"><strong>5-minute lab</strong><ol class=\"checklist\"><li>Draw Host A, switch, router, Host B on another subnet</li><li>Label where ARP happens vs where routing happens</li><li>Predict the Ethernet dest MAC for a remote IP (hint: gateway MAC)</li></ol></div>\n<h4>Toolbox you must know</h4>\n<pre>ip addr / ip route\nping / traceroute\ntcpdump -i eth0 -n\narp -n   # or ip neigh</pre>\n<div class=\"tutorial-callout interview\"><strong>Interview cue</strong><p>Explain a failed ping by layer: link up? same VLAN? ARP complete? route present? ACL/firewall?</p></div>\n\n<h4>Packet walk (memorize this)</h4>\n<ol>\n<li>App writes to a TCP/UDP socket.</li>\n<li>OS builds IP packet (src/dst IP) and looks up a route.</li>\n<li>If destination is remote, next hop is the gateway; ARP resolves gateway MAC if needed.</li>\n<li>NIC sends Ethernet frame: dst MAC = next hop, Ethertype usually IPv4/IPv6.</li>\n<li>Switch forwards by MAC; router strips L2, decrements TTL, rebuilds L2 toward next hop.</li>\n</ol>\n<h4>Subnetting quick fluency</h4>\n<ul>\n<li><code>/30</code> → 4 addresses (2 usable hosts) — common for point-to-point links.</li>\n<li><code>/24</code> → 256 addresses — common LAN.</li>\n<li><code>/64</code> → standard IPv6 LAN prefix.</li>\n</ul>\n<p><strong>Self-check:</strong> Can you explain why pinging an IP does not prove DNS works?</p>"
+      },
+      {
+        "id": "advanced",
+        "title": "Advanced",
+        "badge": "🚀",
+        "minutes": 28,
+        "tagline": "ECMP, MTU, TCP vs UDP, capture-driven debugging",
+        "html": "\n<h4>Forwarding at scale</h4>\n<ul>\n<li><strong>ECMP:</strong> multiple equal-cost next hops; flows hashed across paths. Polarization = bad hash → one path overloaded.</li>\n<li><strong>BGP vs IGP:</strong> BGP between autonomous systems; OSPF/IS-IS typically inside an AS.</li>\n<li><strong>TTL:</strong> decremented each hop to kill loops.</li>\n</ul>\n<h4>Transports</h4>\n<ul>\n<li><strong>TCP:</strong> connection, reliability, ordering, congestion control.</li>\n<li><strong>UDP:</strong> minimal; apps invent reliability if needed (games, custom RPC, tunnels).</li>\n<li><strong>MTU 1500:</strong> common Ethernet payload size for IP; jumbo frames need end-to-end support. Fragmentation/PMTUD issues are classic lab bugs.</li>\n</ul>\n<div class=\"tutorial-callout pitfall\"><strong>Classic footgun</strong><p>Host ARPs for a remote IP → missing/incorrect default route or wrong mask. The packet never reaches the gateway.</p></div>\n<h4>Capture discipline</h4>\n<pre>tcpdump -i eth0 -v icmp\ntcpdump -i eth0 host 10.0.1.10 and port 443\n# Compare: expected SYN/ACK vs RST, VLAN tags, wrong checksums</pre>\n<p>Always ask: <em>where</em> you capture (sender NIC, switch SPAN, receiver). Path asymmetry lies.</p>\n<div class=\"tutorial-callout lab\"><strong>Scenario drill</strong><p>A↔B same VLAN, links UP, switch CAM correct, still fail. Next check: host ARP tables / IP config / host firewall. Write the hypothesis before touching config.</p></div>\n<div class=\"tutorial-callout interview\"><strong>Sound experienced</strong><p>Talk about evidence: “tcpdump showed ARP who-has for remote IP” beats “networking is broken.”</p></div>\n\n<h4>Troubleshooting playbook (use in order)</h4>\n<ol>\n<li>Physical/link: <code>ethtool</code> / carrier / errors / duplex mismatch</li>\n<li>L2 adjacency: VLAN, MAC learning, storms/loops (STP)</li>\n<li>L3: address, mask, gateway, host routes, ARP sanity</li>\n<li>Policy: iptables/nft, security groups, ACLs</li>\n<li>App: port listen, TLS, timeouts</li>\n</ol>\n<h4>TCP behaviors verifiers notice</h4>\n<ul>\n<li>Retransmits, zero windows, slow start vs congestion avoidance</li>\n<li>Checksum offload making “bad checksum” in captures on TX path (normal if offloaded)</li>\n</ul>"
+      },
+      {
+        "id": "expert",
+        "title": "Expert",
+        "badge": "🏆",
+        "minutes": 30,
+        "tagline": "NIC offloads, RSS, RDMA/RoCE — verification mindset",
+        "html": "\n<p>SDK/NIC verification lives at the intersection of <strong>correctness</strong> and <strong>performance path</strong>.</p>\n<h4>Offloads</h4>\n<ul>\n<li><strong>Checksum / TSO / GSO / GRO:</strong> work moves into the NIC or stack aggregation points.</li>\n<li>Bugs often appear only with offloads ON, or only through middleboxes that rewrite packets.</li>\n<li>A/B with <code>ethtool -k/-K</code> is a professional habit.</li>\n</ul>\n<h4>Multi-queue &amp; RSS</h4>\n<ul>\n<li>RSS hashes flows to queues/CPUs for parallelism.</li>\n<li>Bad hashing → imbalance, cache issues, surprising reordering across queues.</li>\n<li>Verify with traffic patterns + <code>/proc/interrupts</code> + per-queue stats.</li>\n</ul>\n<h4>RDMA / RoCE</h4>\n<ul>\n<li><strong>RDMA:</strong> remote memory access with low latency and less CPU than kernel TCP sockets.</li>\n<li><strong>RoCE:</strong> RDMA over Converged Ethernet — common in AI/HPC clusters.</li>\n<li>Verification concerns: lossy vs lossless setup, PFC/ECN, connection migration, fault recovery.</li>\n</ul>\n<div class=\"tutorial-callout tip\"><strong>Expert habit</strong><p>Build a matrix: kernel × driver × offload flags × peer OS × MTU. Escape defects love the cell you skipped.</p></div>\n<div class=\"tutorial-callout interview\"><strong>Manager/tech hybrid answer</strong><p>“I’d gate releases on a smoke path with offloads both on and off, plus a perf job watching RSS balance and p99 — not only average Gbps.”</p></div>\n\n<h4>What “experienced” looks like in NIC/SDK orgs</h4>\n<ul>\n<li>You design <em>negative</em> tests: wrong VLAN, MTU black hole, asymmetric routing, peer with offloads disabled.</li>\n<li>You correlate host counters, switch drops, and pcap — not one tool in isolation.</li>\n<li>You understand when RoCE needs lossless fabric vs what breaks on lossy networks.</li>\n<li>You can explain RSS Toeplitz hashing at a high level and why pin + IRQ affinity matters for numbers.</li>\n</ul>\n<pre># Useful verification loop\nethtool -k eth0 | tee offloads.before\nethtool -K eth0 tso off gso off gro off\n# rerun suite / perf\nethtool -K eth0 tso on gso on gro on</pre><div class=\"tutorial-callout lab\"><strong>Capstone lab idea</strong>Break a working two-host setup five different ways (VLAN, route, ARP spoof/static wrong, MTU, offload+middlebox). For each, write the first three commands you’d run and the expected evidence.</div>"
+      }
+    ],
+    "resources": [
+      {
+        "title": "Cloudflare Learning Center — Networking basics",
+        "url": "https://www.cloudflare.com/learning/network-layer/what-is-a-computer-network/",
+        "source": "Cloudflare",
+        "note": "Clear free explainers for IP, DNS, TLS, CDN concepts."
+      },
+      {
+        "title": "Practical Networking",
+        "url": "https://www.practicalnetworking.net/",
+        "source": "Practical Networking",
+        "note": "Excellent free subnetting &amp; packet-flow lessons."
+      },
+      {
+        "title": "Wireshark University / Official docs",
+        "url": "https://www.wireshark.org/docs/",
+        "source": "Wireshark",
+        "note": "Learn capture filters and protocol decoding hands-on."
+      },
+      {
+        "title": "Linux iproute2 utilities (ip-route man)",
+        "url": "https://man7.org/linux/man-pages/man8/ip-route.8.html",
+        "source": "man7",
+        "note": "Authoritative reference for modern Linux routing commands."
+      },
+      {
+        "title": "RoCE Initiative overview",
+        "url": "https://www.roceinitiative.org/",
+        "source": "RoCE Initiative",
+        "note": "Free high-level RDMA-over-Ethernet orientation."
+      }
+    ]
+  }
+}

@@ -23,6 +23,36 @@ const manifestPath = path.join(questionsDir, 'manifest.json');
 // Required fields for validation
 const REQUIRED_FIELDS = ['id', 'title', 'icon', 'description', 'questions', 'documentation', 'followUpQuestions'];
 
+function getQuestionType(question) {
+    return question.type || 'mcq';
+}
+
+function isValidQuestion(question, label) {
+    if (!question || !question.question) {
+        return `${label}: missing question text`;
+    }
+    const type = getQuestionType(question);
+    if (type === 'mcq') {
+        if (!Array.isArray(question.options) || typeof question.correct !== 'number') {
+            return `${label}: mcq requires options[] and correct index`;
+        }
+        return null;
+    }
+    if (type === 'text' || type === 'code') {
+        if (!question.explanation) {
+            return `${label}: ${type} requires explanation`;
+        }
+        const hasAccepted = Array.isArray(question.acceptedAnswers) && question.acceptedAnswers.length > 0;
+        const hasPatterns = Array.isArray(question.answerPatterns) && question.answerPatterns.length > 0;
+        const hasKeywords = Array.isArray(question.keywords) && question.keywords.length > 0;
+        if (!hasAccepted && !hasPatterns && !hasKeywords) {
+            return `${label}: ${type} requires acceptedAnswers, answerPatterns, or keywords`;
+        }
+        return null;
+    }
+    return `${label}: unknown type "${type}"`;
+}
+
 // Read all .json files from the questions directory (excluding manifest.json)
 const files = fs.readdirSync(questionsDir)
     .filter(file => file.endsWith('.json') && file !== 'manifest.json')
@@ -54,9 +84,9 @@ for (const file of files) {
         // Validate each question
         let questionsValid = true;
         for (let i = 0; i < content.questions.length; i++) {
-            const q = content.questions[i];
-            if (!q.question || !Array.isArray(q.options) || typeof q.correct !== 'number' || !q.explanation) {
-                errors.push(`  ❌ ${file}: Invalid question at index ${i}`);
+            const err = isValidQuestion(content.questions[i], `question[${i}]`);
+            if (err) {
+                errors.push(`  ❌ ${file}: ${err}`);
                 questionsValid = false;
                 break;
             }
@@ -68,9 +98,26 @@ for (const file of files) {
             errors.push(`  ❌ ${file}: followUpQuestions must be an array`);
             continue;
         }
+
+        let followUpsValid = true;
+        for (let i = 0; i < content.followUpQuestions.length; i++) {
+            const err = isValidQuestion(content.followUpQuestions[i], `followUp[${i}]`);
+            if (err) {
+                errors.push(`  ❌ ${file}: ${err}`);
+                followUpsValid = false;
+                break;
+            }
+        }
+        if (!followUpsValid) continue;
         
         validFiles.push(file);
-        console.log(`  ✅ ${file} (${content.questions.length} questions, ${content.followUpQuestions.length} follow-ups)`);
+        const types = {};
+        for (const q of [...content.questions, ...content.followUpQuestions]) {
+            const t = getQuestionType(q);
+            types[t] = (types[t] || 0) + 1;
+        }
+        const typeSummary = Object.entries(types).map(([k, v]) => `${v} ${k}`).join(', ');
+        console.log(`  ✅ ${file} (${content.questions.length} questions, ${content.followUpQuestions.length} follow-ups; ${typeSummary})`);
     } catch (e) {
         errors.push(`  ❌ ${file}: ${e.message}`);
     }

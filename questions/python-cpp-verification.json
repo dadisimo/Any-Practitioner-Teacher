@@ -1,0 +1,370 @@
+{
+  "id": "python-cpp-verification",
+  "title": "Python & C++ for Verification",
+  "icon": "💻",
+  "description": "Hands-on coding prompts in Python and C/C++ used daily in SDK test harnesses and tools",
+  "questions": [
+    {
+      "id": 1,
+      "type": "code",
+      "language": "python",
+      "question": "Write a Python function `parse_kv(line)` that parses \"key=value\" into a (key, value) tuple stripped of whitespace. Raise ValueError if \"=\" is missing.",
+      "starterCode": "def parse_kv(line):\n    ",
+      "acceptedAnswers": [
+        "if \"=\" not in line:\n        raise ValueError(\"missing =\")\n    k, v = line.split(\"=\", 1)\n    return k.strip(), v.strip()"
+      ],
+      "answerPatterns": [
+        "split\\([^)]*=[^)]*1\\)[\\s\\S]*strip|raise\\s+ValueError"
+      ],
+      "modelAnswer": "k, v = line.split(\"=\", 1)\nreturn k.strip(), v.strip()  # plus check for missing =",
+      "explanation": "Harnesses parse logs/config constantly — split once, strip, validate."
+    },
+    {
+      "id": 2,
+      "type": "code",
+      "language": "python",
+      "question": "Write a context manager class `chdir(path)` that temporarily changes the working directory and restores it afterward.",
+      "starterCode": "import os\n\nclass chdir:\n    def __init__(self, path):\n        self.path = path\n        self.prev = None\n    def __enter__(self):\n        ",
+      "acceptedAnswers": [
+        "self.prev = os.getcwd()\n        os.chdir(self.path)\n        return self\n    def __exit__(self, exc_type, exc, tb):\n        os.chdir(self.prev)"
+      ],
+      "answerPatterns": [
+        "getcwd\\([\\s\\S]*chdir\\([\\s\\S]*__exit__[\\s\\S]*chdir"
+      ],
+      "modelAnswer": "__enter__: save cwd, chdir to path\n__exit__: chdir back to saved cwd",
+      "explanation": "Temporary chdir is common when tests rely on relative artifacts."
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "question": "In C++, what does RAII primarily help you manage?",
+      "options": [
+        "Resource lifetime via object lifetime (ctors/dtors), reducing leaks and unlock bugs",
+        "Runtime reflection of all private members",
+        "Automatic parallelization of every for-loop",
+        "Guaranteed O(1) hash table lookups"
+      ],
+      "correct": 0,
+      "explanation": "RAII ties resources (memory, locks, FDs) to scopes — critical in native SDK code."
+    },
+    {
+      "id": 4,
+      "type": "code",
+      "language": "cpp",
+      "question": "Write a C++ function signature and body for `int clamp(int x, int lo, int hi)` that returns x limited to [lo, hi]. Assume lo <= hi.",
+      "acceptedAnswers": [
+        "int clamp(int x, int lo, int hi) {\n  if (x < lo) return lo;\n  if (x > hi) return hi;\n  return x;\n}",
+        "int clamp(int x, int lo, int hi) { return std::max(lo, std::min(x, hi)); }"
+      ],
+      "answerPatterns": [
+        "clamp\\s*\\([\\s\\S]*\\)[\\s\\S]*(return|if)|std::max\\s*\\(\\s*lo"
+      ],
+      "modelAnswer": "int clamp(int x, int lo, int hi) {\n  if (x < lo) return lo;\n  if (x > hi) return hi;\n  return x;\n}",
+      "explanation": "Simple correctness under boundaries — interview warm-up for native code."
+    },
+    {
+      "id": 5,
+      "type": "text",
+      "question": "Why might a Python verification harness shell out to a C++ stress binary instead of reimplementing it in Python?",
+      "keywords": [
+        [
+          "performance"
+        ],
+        [
+          "speed"
+        ],
+        [
+          "parity"
+        ],
+        [
+          "production"
+        ],
+        [
+          "native"
+        ],
+        [
+          "reuse"
+        ],
+        [
+          "latency"
+        ]
+      ],
+      "modelAnswer": "To reuse production-like native paths, get higher performance/fidelity, and avoid reimplementing subtle protocol behavior in Python.",
+      "explanation": "Polyglot harnesses are normal: Python orchestrates, C/C++ hammers."
+    },
+    {
+      "id": 6,
+      "type": "code",
+      "language": "python",
+      "question": "Write a Python generator `tail_n(path, n)` that yields the last n lines of a text file efficiently enough for interview purposes (reading the file is OK).",
+      "starterCode": "from collections import deque\n\ndef tail_n(path, n):\n    ",
+      "acceptedAnswers": [
+        "with open(path) as f:\n        for line in deque(f, maxlen=n):\n            yield line.rstrip(\"\\n\")"
+      ],
+      "answerPatterns": [
+        "deque\\([\\s\\S]*maxlen|readlines\\([\\s\\S]*\\[-"
+      ],
+      "modelAnswer": "with open(path) as f:\n    yield from deque(f, maxlen=n)",
+      "explanation": "deque(maxlen=n) is the clean interview answer for tailing."
+    },
+    {
+      "id": 7,
+      "type": "code",
+      "language": "cpp",
+      "question": "Show how to prevent copying of a C++ class `DeviceHandle` (delete copy ctor and copy assignment).",
+      "acceptedAnswers": [
+        "DeviceHandle(const DeviceHandle&) = delete;\nDeviceHandle& operator=(const DeviceHandle&) = delete;"
+      ],
+      "answerPatterns": [
+        "=\\s*delete"
+      ],
+      "modelAnswer": "DeviceHandle(const DeviceHandle&) = delete;\nDeviceHandle& operator=(const DeviceHandle&) = delete;",
+      "explanation": "Non-copyable handles prevent double-free / double-close bugs — RAII discipline."
+    },
+    {
+      "id": 8,
+      "type": "mcq",
+      "question": "What is undefined behavior if you data-race a non-atomic int in C++?",
+      "options": [
+        "The program may crash, corrupt data, or appear to work — UB means no guarantees",
+        "The compiler must insert a mutex automatically",
+        "Python will catch it with an exception",
+        "Linux converts it into a SIGKILL always"
+      ],
+      "correct": 0,
+      "explanation": "Data races on non-atomics are UB in C++ — detectors and discipline matter."
+    },
+    {
+      "id": 9,
+      "type": "code",
+      "language": "python",
+      "question": "Write a Python function `classify_rc(rc)` that returns \"pass\" if rc==0, \"skip\" if rc==77, else \"fail\".",
+      "starterCode": "def classify_rc(rc):\n    ",
+      "acceptedAnswers": [
+        "if rc == 0: return \"pass\"\n    if rc == 77: return \"skip\"\n    return \"fail\""
+      ],
+      "answerPatterns": [
+        "return\\s+[\"']pass[\"'][\\s\\S]*skip[\\s\\S]*fail|77"
+      ],
+      "modelAnswer": "if rc == 0: return \"pass\"\nif rc == 77: return \"skip\"\nreturn \"fail\"",
+      "explanation": "Exit-code taxonomies (including skip) show up in automations and CI."
+    },
+    {
+      "id": 10,
+      "type": "text",
+      "question": "Name two differences between std::shared_ptr and std::unique_ptr that matter in SDK resource management.",
+      "keywords": [
+        [
+          "own"
+        ],
+        [
+          "shared"
+        ],
+        [
+          "unique"
+        ],
+        [
+          "refcount"
+        ],
+        [
+          "exclusive"
+        ],
+        [
+          "copy"
+        ]
+      ],
+      "modelAnswer": "unique_ptr: exclusive ownership, movable not copyable. shared_ptr: shared ownership with refcount, copies allowed.",
+      "explanation": "Ownership model choice prevents leaks and use-after-free in native stacks."
+    },
+    {
+      "id": 11,
+      "type": "code",
+      "language": "python",
+      "question": "Using pathlib, write code that creates directory reports/ uniquely if missing (parents OK) and writes \"ok\" into reports/status.txt.",
+      "starterCode": "from pathlib import Path\n",
+      "acceptedAnswers": [
+        "p = Path(\"reports\")\np.mkdir(parents=True, exist_ok=True)\n(p / \"status.txt\").write_text(\"ok\")"
+      ],
+      "answerPatterns": [
+        "mkdir\\([\\s\\S]*exist_ok\\s*=\\s*True[\\s\\S]*write_text\\(\\s*[\"']ok[\"']\\)|open\\([\\s\\S]*status"
+      ],
+      "modelAnswer": "Path(\"reports\").mkdir(parents=True, exist_ok=True)\nPath(\"reports/status.txt\").write_text(\"ok\")",
+      "explanation": "Idempotent artifact directories are CI hygiene."
+    },
+    {
+      "id": 12,
+      "type": "text",
+      "question": "A C++ SDK API returns raw pointers the caller must free. What safer API design would you propose in a design review?",
+      "keywords": [
+        [
+          "unique_ptr"
+        ],
+        [
+          "shared_ptr"
+        ],
+        [
+          "raii"
+        ],
+        [
+          "owner"
+        ],
+        [
+          "smart"
+        ],
+        [
+          "span"
+        ],
+        [
+          "handle"
+        ]
+      ],
+      "modelAnswer": "Return std::unique_ptr (or an RAII handle) so ownership and lifetime are explicit and exception-safe.",
+      "explanation": "Hands-on managers push API testability and safety in reviews."
+    }
+  ],
+  "followUpQuestions": [
+    {
+      "type": "mcq",
+      "question": "RAII ties resource cleanup to…",
+      "options": [
+        "Object lifetime/destructors",
+        "Jenkins labels",
+        "DNS TTLs",
+        "VLAN IDs"
+      ],
+      "correct": 0,
+      "explanation": "RAII = resource lifetime follows object lifetime."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "question": "Create an empty set named s in Python.",
+      "acceptedAnswers": [
+        "s = set()",
+        "s=set()"
+      ],
+      "answerPatterns": [
+        "s\\s*=\\s*set\\(\\s*\\)"
+      ],
+      "explanation": "{} is a dict; set() makes a set."
+    },
+    {
+      "type": "text",
+      "question": "unique_ptr models what kind of ownership?",
+      "keywords": [
+        [
+          "exclusive"
+        ],
+        [
+          "single"
+        ],
+        [
+          "unique"
+        ],
+        [
+          "one"
+        ]
+      ],
+      "explanation": "Exclusive/single ownership."
+    },
+    {
+      "type": "code",
+      "language": "cpp",
+      "question": "Include the header for std::vector.",
+      "acceptedAnswers": [
+        "#include <vector>"
+      ],
+      "answerPatterns": [
+        "#include\\s*<vector>"
+      ],
+      "explanation": "std::vector lives in <vector>."
+    },
+    {
+      "type": "text",
+      "question": "Why orchestrate tests in Python but stress in C++?",
+      "keywords": [
+        [
+          "orchestr"
+        ],
+        [
+          "performance"
+        ],
+        [
+          "native"
+        ],
+        [
+          "product"
+        ],
+        [
+          "speed"
+        ],
+        [
+          "fidelity"
+        ]
+      ],
+      "explanation": "Python for glue; C++ for fidelity/performance."
+    }
+  ],
+  "documentation": "<h3>Python & C++ for Verification</h3>\n<p>Daily craft for SDK verification teams: Python harnesses + native fidelity.</p>\n<ul>\n<li>Python: parsing, fixtures, pathlib, generators, orchestration</li>\n<li>C++: RAII, smart pointers, deleted copies, UB/races awareness</li>\n<li>Design reviews: ownership-safe APIs beat raw free() contracts</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Parsing, pathlib, and tiny pytest</li>\n<li><strong>Advanced:</strong> RAII, unique_ptr, and polyglot harnesses</li>\n<li><strong>Expert:</strong> UB awareness and API review instincts</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://docs.python.org/3/tutorial/\" target=\"_blank\" rel=\"noopener noreferrer\">Official Python Tutorial</a> — The canonical free Python on-ramp.</li><li><a href=\"https://www.learncpp.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Learn C++ (learncpp.com)</a> — Best free structured C++ course-style site.</li><li><a href=\"https://en.cppreference.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cppreference</a> — Authoritative free C++ standard library reference.</li></ul>",
+  "tutorial": {
+    "intro": "Become bilingual: Python for orchestration and C++ for fidelity — with ownership-safe APIs.",
+    "levels": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "badge": "🌱",
+        "minutes": 22,
+        "tagline": "Parsing, pathlib, and tiny pytest",
+        "html": "\n<pre>def parse_kv(line):\n    k, v = line.split('=', 1)\n    return k.strip(), v.strip()\n\nPath('reports').mkdir(parents=True, exist_ok=True)</pre>\n<p>Python shines at glue: logs, artifacts, CI orchestration.</p>\n<div class=\"tutorial-callout tip\"><strong>Remember</strong><p><code>set()</code> makes a set; <code>{}</code> is a dict.</p></div>\n\n<h4>Python essentials for harnesses</h4>\n<ul>\n<li>venv + pinned <code>requirements.txt</code></li>\n<li>subprocess with timeouts; never hang a CI agent forever</li>\n<li>pathlib over string concat for paths</li>\n</ul><h4>Mini exercise</h4>\n<p>Write <code>classify_rc</code> and a pytest that checks 0/77/1. Then wrap a subprocess call with timeout and map return codes through it.</p>"
+      },
+      {
+        "id": "advanced",
+        "title": "Advanced",
+        "badge": "🚀",
+        "minutes": 24,
+        "tagline": "RAII, unique_ptr, and polyglot harnesses",
+        "html": "\n<ul>\n<li><strong>RAII:</strong> resource lifetime follows object lifetime.</li>\n<li><strong>unique_ptr:</strong> exclusive ownership; <strong>shared_ptr:</strong> refcounted sharing.</li>\n<li>Delete copy ctor/assignment for handles that must not double-close.</li>\n<li>Shell out to native stress binaries from Python for fidelity/perf.</li>\n</ul>\n<pre>DeviceHandle(const DeviceHandle&) = delete;\nDeviceHandle& operator=(const DeviceHandle&) = delete;</pre>\n\n<h4>C++ ownership rules of thumb</h4>\n<ul>\n<li>Default to <code>unique_ptr</code> for exclusive resources</li>\n<li>Use <code>shared_ptr</code> only with a clear shared lifetime story</li>\n<li>prefer <code>std::span</code>/views at API boundaries when possible</li>\n<li>compile with <code>-Wall -Wextra</code> and sanitizers in CI</li>\n</ul><h4>Exception safety (C++)</h4>\n<ul>\n<li>If a constructor acquires two resources, use RAII members so partial failure cleans up</li>\n<li>Don’t free in callers if an exception can skip the free</li>\n<li>Prefer value semantics / move for transfer</li>\n</ul>"
+      },
+      {
+        "id": "expert",
+        "title": "Expert",
+        "badge": "🏆",
+        "minutes": 22,
+        "tagline": "UB awareness and API review instincts",
+        "html": "\n<ul>\n<li>Data races on non-atomic C++ objects are <strong>undefined behavior</strong>.</li>\n<li>In design reviews, push APIs that return <code>unique_ptr</code>/RAII handles — not raw “caller must free.”</li>\n<li>Exit-code taxonomy (<code>0</code> pass, <code>77</code> skip, else fail) keeps automation honest.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Hybrid answer</strong><p>“Python owns the matrix and reporting; C++ owns the packet path under TSan/ASan builds.”</p></div>\n\n<h4>Interop craft</h4>\n<ul>\n<li>pybind11/ctypes/cffi for thin bindings — keep logic testable on both sides</li>\n<li>ABI stability: version your native SONAME; test old apps against new .so</li>\n<li>Crash reproduction: core dumps, <code>gdb</code>, symbolized stacks in CI artifacts</li>\n</ul><h4>Build matrix literacy</h4>\n<pre>cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=\"-fsanitize=address,undefined -fno-omit-frame-pointer\"\ncmake -DCMAKE_BUILD_TYPE=Release  # perf jobs\n# Python: tox/nox across 3.x versions</pre>\n<p>Experienced engineers always know which build found the bug.</p>"
+      }
+    ],
+    "resources": [
+      {
+        "title": "Official Python Tutorial",
+        "url": "https://docs.python.org/3/tutorial/",
+        "source": "Python.org",
+        "note": "The canonical free Python on-ramp."
+      },
+      {
+        "title": "Learn C++ (learncpp.com)",
+        "url": "https://www.learncpp.com/",
+        "source": "LearnCpp",
+        "note": "Best free structured C++ course-style site."
+      },
+      {
+        "title": "cppreference",
+        "url": "https://en.cppreference.com/",
+        "source": "cppreference",
+        "note": "Authoritative free C++ standard library reference."
+      },
+      {
+        "title": "freeCodeCamp Python curriculum",
+        "url": "https://www.freecodecamp.org/learn/scientific-computing-with-python/",
+        "source": "freeCodeCamp",
+        "note": "Free interactive Python practice."
+      },
+      {
+        "title": "The C++ Core Guidelines",
+        "url": "https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines",
+        "source": "isocpp",
+        "note": "Free guidance on ownership, RAII, and safety."
+      }
+    ]
+  }
+}

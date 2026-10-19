@@ -34,7 +34,8 @@
                 <div class="info-box">
                     <h3>How It Works:</h3>
                     <ol>
-                        <li>Answer quiz questions for each section</li>
+                        <li>Use each section’s Learn path (Basics → Advanced → Expert) plus free external tutorials</li>
+                        <li>Answer section questions (multiple choice, open text, or short code)</li>
                         <li>Get a question wrong? Documentation opens immediately</li>
                         <li>Study the material, then answer 3 follow-up questions correctly</li>
                         <li>Fail 1 follow-up question? Back to documentation</li>
@@ -57,7 +58,31 @@
         <!-- Section Selection -->
         <div id="section-screen" class="screen">
             <h2>Choose Your Section</h2>
+            <p class="section-screen-hint">Sections with a Learn path let you level up Basics → Advanced → Expert before the quiz.</p>
             <div id="sections-container" class="sections-grid"></div>
+        </div>
+
+        <!-- Tutorial / Learn Path Screen -->
+        <div id="tutorial-screen" class="screen">
+            <div class="tutorial-top">
+                <button class="btn btn-secondary btn-small" onclick="showSectionSelection()">← Sections</button>
+                <div class="tutorial-heading">
+                    <h2 id="tutorial-title"></h2>
+                    <p id="tutorial-intro" class="tutorial-intro"></p>
+                </div>
+            </div>
+            <div id="tutorial-level-tabs" class="tutorial-level-tabs"></div>
+            <div id="tutorial-progress" class="tutorial-progress"></div>
+            <article id="tutorial-body" class="tutorial-body doc-content"></article>
+            <div class="tutorial-nav">
+                <button class="btn btn-secondary" id="tutorial-prev-btn" onclick="tutorialPrevLevel()">Previous</button>
+                <button class="btn btn-primary" id="tutorial-next-btn" onclick="tutorialNextLevel()">Next level</button>
+            </div>
+            <section id="tutorial-resources" class="tutorial-resources"></section>
+            <div class="tutorial-actions">
+                <button class="btn btn-primary" onclick="startQuizFromTutorial()">I'm ready — Start Quiz</button>
+                <button class="btn btn-secondary" onclick="showSectionSelection()">Back to Sections</button>
+            </div>
         </div>
 
         <!-- Quiz Screen -->
@@ -65,6 +90,7 @@
             <div class="quiz-header">
                 <h2 id="quiz-title"></h2>
                 <p id="question-counter"></p>
+                <button class="btn btn-secondary btn-small tutorial-peek-btn" id="quiz-open-tutorial-btn" onclick="openTutorialFromQuiz()" hidden>Open Learn Path</button>
             </div>
             <div id="question-container" class="question-container"></div>
         </div>
@@ -75,7 +101,10 @@
                 <h2 id="doc-title"></h2>
             </div>
             <div id="doc-content" class="doc-content"></div>
-            <button class="btn btn-primary" onclick="startFollowUpQuestions()">I've Finished Reading - Take Follow-up Quiz</button>
+            <div class="doc-actions">
+                <button class="btn btn-secondary" id="doc-open-tutorial-btn" onclick="openTutorialFromDocs()" hidden>Open full Learn Path</button>
+                <button class="btn btn-primary" onclick="startFollowUpQuestions()">I've Finished Reading - Take Follow-up Quiz</button>
+            </div>
         </div>
 
         <!-- Follow-up Questions Screen -->
