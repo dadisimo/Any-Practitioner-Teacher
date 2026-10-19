@@ -286,33 +286,33 @@
       "explanation": "cgroups limit and account process-group resources."
     }
   ],
-  "documentation": "<h3>Linux for Verification Engineers</h3>\n<p>Be fluent at the syscall/driver boundary: permissions, sockets, ethtool, logs, and performance isolation.</p>\n<ul>\n<li><strong>Sockets:</strong> <code>ss</code>, <code>ip</code>, <code>tcpdump</code></li>\n<li><strong>NIC:</strong> <code>ethtool</code> link/offloads/queues/stats</li>\n<li><strong>Debug:</strong> <code>dmesg</code>, <code>strace</code>, <code>perf</code>, <code>/proc/interrupts</code></li>\n<li><strong>Isolation:</strong> pinning, cgroups, capabilities, udev</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Processes, permissions, and where the kernel talks</li>\n<li><strong>Advanced:</strong> ethtool, strace, modules, and interrupt imbalance</li>\n<li><strong>Expert:</strong> cgroups, capabilities, perf, matrix testing</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://linuxjourney.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Linux Journey</a> — Friendly free path through Linux fundamentals.</li><li><a href=\"https://bootlin.com/doc/training/linux-kernel/\" target=\"_blank\" rel=\"noopener noreferrer\">Free Electrons / Bootlin kernel labs (materials)</a> — High-quality free kernel/driver training slides.</li><li><a href=\"https://man7.org/linux/man-pages/man8/ss.8.html\" target=\"_blank\" rel=\"noopener noreferrer\">man ss / man ethtool</a> — Primary references for socket &amp; NIC tooling.</li></ul>",
+  "documentation": "\n<h3>Linux Systems for Verification — Study Guide</h3>\n<p>For the full interactive course, open this section’s <strong>Learn</strong> path (Basics → Advanced → Expert). Every important command is explained flag-by-flag there.</p>\n<h4>Level map</h4>\n<ul>\n<li><strong>Basics:</strong> Users, devices, sockets, and kernel messages</li>\n<li><strong>Advanced:</strong> strace, ethtool, modules, IRQ imbalance</li>\n<li><strong>Expert:</strong> cgroups, capabilities, perf, reproducible labs</li>\n</ul>\n<h4>Free resources</h4>\n<ul><li><a href=\"https://linuxjourney.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Linux Journey</a> — Gentle free path through Linux fundamentals.</li><li><a href=\"https://man7.org/linux/man-pages/man8/ss.8.html\" target=\"_blank\" rel=\"noopener noreferrer\">ss(8)</a> — Socket statistics reference.</li><li><a href=\"https://man7.org/linux/man-pages/man8/ethtool.8.html\" target=\"_blank\" rel=\"noopener noreferrer\">ethtool(8)</a> — NIC settings &amp; stats flags.</li></ul>",
   "tutorial": {
-    "intro": "Become dangerous (in a good way) on a Linux lab box: permissions, NICs, logs, and reproducible performance.",
+    "intro": "Build Linux lab fluency: permissions, sockets, NIC tooling, logs, and performance isolation — every command explained.",
     "levels": [
       {
         "id": "basics",
         "title": "Basics",
         "badge": "🌱",
-        "minutes": 22,
-        "tagline": "Processes, permissions, and where the kernel talks",
-        "html": "\n<ul>\n<li><strong>Process vs thread:</strong> process ≈ address space; threads share it and are scheduled separately.</li>\n<li><strong>User vs kernel:</strong> SDKs make syscalls; drivers and the network stack live in the kernel.</li>\n<li><strong>Permissions:</strong> UID/GID, file modes on <code>/dev/*</code>, supplementary groups, capabilities.</li>\n</ul>\n<pre>ss -lntp\nip link / ip addr\ndmesg | tail\njournalctl -k -b</pre>\n<div class=\"tutorial-callout pitfall\"><strong>CI classic</strong><p>Permission denied on a device node is often udev group membership — not “the SDK is broken.”</p></div>\n<div class=\"tutorial-callout lab\"><strong>Try</strong><p>Run <code>ss -lntp</code> and identify one listening service and its PID.</p></div>\n\n<h4>Filesystem &amp; devices intuition</h4>\n<ul>\n<li>Everything is a file — including <code>/dev</code> nodes for NICs/GPUs.</li>\n<li><code>ls -l /dev/...</code> shows owner/group/mode; udev rules rewrite these on insert.</li>\n<li>Logs: userspace apps → journal/syslog; drivers → <code>dmesg</code>.</li>\n</ul>\n<pre>ls -l /dev/nvidia* 2>/dev/null\nid\ngroups\nuname -a</pre><h4>Reading errno like a pro</h4>\n<ul>\n<li><code>EPERM</code>/<code>EACCES</code> → permissions/capabilities</li>\n<li><code>ENOENT</code> → path/device missing (driver not loaded?)</li>\n<li><code>ETIMEDOUT</code>/<code>ECONNREFUSED</code> → network/service</li>\n</ul>"
+        "minutes": 35,
+        "tagline": "Users, devices, sockets, and kernel messages",
+        "html": "\n<p>Goal: stop treating Linux as a black box. Know <em>who you are</em>, <em>what you can open</em>, and <em>where errors land</em>.</p>\n\n<h4>1. Who am I on this machine?</h4>\n<div class=\"cmd-block\"><pre>id</pre><dl class=\"cmd-explain\"><dt><code>id</code></dt><dd>Print your user ID (uid), primary group (gid), and supplementary groups.</dd></dl></div>\n<div class=\"cmd-block\"><pre>groups</pre><dl class=\"cmd-explain\"><dt><code>groups</code></dt><dd>Quick list of group names — important for /dev access (e.g. dialout, docker, render).</dd></dl></div>\n<div class=\"why-box\"><strong>Why groups matter for SDKs</strong><p>Many device nodes are mode 660 root:somegroup. If your CI user is not in somegroup, open() returns EACCES — the SDK looks “broken” but the environment is wrong.</p></div>\n\n<h4>2. Inspect a device node</h4>\n<div class=\"cmd-block\"><pre>ls -l /dev/nvidia0</pre><dl class=\"cmd-explain\"><dt><code>ls -l</code></dt><dd>Long listing: permissions, owner, group, name.</dd><dt><code>/dev/nvidia0</code></dt><dd>Example char device — replace with your NIC/USB/GPU node.</dd></dl></div>\n<p>Read <code>crw-rw---- 1 root video</code> as: character device; owner root can rw; group video can rw; others nothing.</p>\n\n<h4>3. Listening ports &amp; processes</h4>\n<div class=\"cmd-block\"><pre>ss -lntp</pre><dl class=\"cmd-explain\"><dt><code>ss</code></dt><dd>Show socket state (connections and listeners).</dd><dt><code>-l</code></dt><dd>Listening only.</dd><dt><code>-n</code></dt><dd>Numeric addresses/ports.</dd><dt><code>-t</code></dt><dd>TCP.</dd><dt><code>-p</code></dt><dd>Process that owns the socket.</dd></dl></div>\n<div class=\"cmd-block\"><pre>ss -lunp</pre><dl class=\"cmd-explain\"><dt><code>-u</code></dt><dd>UDP instead of TCP — same idea for datagram listeners.</dd></dl></div>\n\n<h4>4. Kernel/driver messages</h4>\n<div class=\"cmd-block\"><pre>dmesg -T | tail -50</pre><dl class=\"cmd-explain\"><dt><code>dmesg</code></dt><dd>Print the kernel ring buffer (driver probes, link flaps, oopses).</dd><dt><code>-T</code></dt><dd>Human-readable timestamps.</dd><dt><code>tail -50</code></dt><dd>Only the last 50 lines for a quick look.</dd></dl></div>\n<div class=\"cmd-block\"><pre>journalctl -k -b --no-pager | tail -50</pre><dl class=\"cmd-explain\"><dt><code>journalctl</code></dt><dd>systemd journal query tool.</dd><dt><code>-k</code></dt><dd>Kernel messages only.</dd><dt><code>-b</code></dt><dd>This boot only.</dd><dt><code>--no-pager</code></dt><dd>Print to stdout (CI-friendly).</dd></dl></div>\n<div class=\"tutorial-callout tip\"><strong>First place for “driver didn’t load”</strong><p>Search dmesg/journal for the module/NIC name right after failure. Userspace logs often never see the real error.</p></div>\n\n<h4>5. Processes vs threads (interview crispness)</h4>\n<p>A <strong>process</strong> owns an address space and resources (FDs, etc.). <strong>Threads</strong> are schedulable execution contexts that can share that address space. SDK bugs that appear only under load are often thread-safety bugs.</p>\n"
       },
       {
         "id": "advanced",
         "title": "Advanced",
         "badge": "🚀",
-        "minutes": 26,
-        "tagline": "ethtool, strace, modules, and interrupt imbalance",
-        "html": "\n<h4>NIC tooling</h4>\n<pre>ethtool eth0\nethtool -k eth0          # offloads\nethtool -S eth0          # driver stats\nethtool -L eth0 combined 4</pre>\n<h4>Debugging userspace↔kernel</h4>\n<ul>\n<li><code>strace -f</code> on a failing test binary — watch open/ioctl/connect errno.</li>\n<li>Kernel modules (<code>.ko</code>): version skew with <code>uname -r</code> breaks labs constantly.</li>\n<li><code>/proc/interrupts</code>: if all NIC IRQs stick on CPU0, perf numbers lie.</li>\n</ul>\n<div class=\"tutorial-callout tip\"><strong>Stabilize benches</strong><p>Pin IRQs and worker threads; respect NUMA node locality.</p></div>\n<div class=\"tutorial-callout interview\"><strong>Sound senior</strong><p>Describe a time you used strace/dmesg/ethtool together to separate “env” from “product bug.”</p></div>\n\n<h4>Performance hygiene checklist</h4>\n<ul>\n<li>Disable turbo/frequency surprises when comparing builds (policy depends on lab).</li>\n<li>Watch softirqs and <code>/proc/interrupts</code> during load.</li>\n<li><code>taskset</code>/<code>cpuset</code> for workers; irqbalance settings for NICs.</li>\n<li>NUMA: <code>numactl --hardware</code>; keep memory near the NIC’s node when possible.</li>\n</ul>\n<pre>grep eth0 /proc/interrupts\ncat /proc/softirqs\nnumactl --hardware | head</pre>"
+        "minutes": 40,
+        "tagline": "strace, ethtool, modules, IRQ imbalance",
+        "html": "\n<h4>1. strace: watch syscalls fail in real time</h4>\n<div class=\"cmd-block\"><pre>strace -f -o /tmp/sdk.strace ./your_test</pre><dl class=\"cmd-explain\"><dt><code>strace</code></dt><dd>Trace system calls and signals of a program.</dd><dt><code>-f</code></dt><dd>Follow children/threads (critical for multi-process tests).</dd><dt><code>-o /tmp/sdk.strace</code></dt><dd>Write output to a file (easier to search).</dd><dt><code>./your_test</code></dt><dd>The command you are debugging.</dd></dl></div>\n<div class=\"cmd-block\"><pre>strace -e openat,ioctl,connect ./your_test</pre><dl class=\"cmd-explain\"><dt><code>-e openat,ioctl,connect</code></dt><dd>Only show these syscalls — less noise when you already suspect device/network.</dd></dl></div>\n<div class=\"why-box\"><strong>What to look for</strong><p>openat(...)= -1 EACCES / ENOENT, ioctl failures, connect ETIMEDOUT/ECONNREFUSED. Those errno values are the diagnosis.</p></div>\n\n<h4>2. ethtool deep dive</h4>\n<div class=\"cmd-block\"><pre>ethtool eth0</pre><dl class=\"cmd-explain\"><dt><code>ethtool eth0</code></dt><dd>Link settings: speed, duplex, auto-neg, link detected.</dd></dl></div>\n<div class=\"cmd-block\"><pre>ethtool -k eth0</pre><dl class=\"cmd-explain\"><dt><code>-k</code></dt><dd>Offload features list (checksum/TSO/GRO…).</dd></dl></div>\n<div class=\"cmd-block\"><pre>ethtool -S eth0 | egrep -i \"err|drop|disc|miss\"</pre><dl class=\"cmd-explain\"><dt><code>-S</code></dt><dd>Driver stats dump.</dd><dt><code>egrep ...</code></dt><dd>Filter to error/drop-like counters quickly.</dd></dl></div>\n<div class=\"cmd-block\"><pre>sudo ethtool -K eth0 tso off</pre><dl class=\"cmd-explain\"><dt><code>-K ... tso off</code></dt><dd>Disable one offload for A/B correctness testing.</dd></dl></div>\n\n<h4>3. Kernel modules</h4>\n<div class=\"cmd-block\"><pre>uname -r</pre><dl class=\"cmd-explain\"><dt><code>uname -r</code></dt><dd>Running kernel release — modules must match this ABI.</dd></dl></div>\n<div class=\"cmd-block\"><pre>lsmod | head</pre><dl class=\"cmd-explain\"><dt><code>lsmod</code></dt><dd>List loaded kernel modules.</dd></dl></div>\n<div class=\"cmd-block\"><pre>modinfo <module></pre><dl class=\"cmd-explain\"><dt><code>modinfo</code></dt><dd>Show module path, version, parameters, firmware deps.</dd></dl></div>\n\n<h4>4. IRQ / CPU imbalance</h4>\n<div class=\"cmd-block\"><pre>grep eth0 /proc/interrupts</pre><dl class=\"cmd-explain\"><dt><code>/proc/interrupts</code></dt><dd>Per-CPU interrupt counters.</dd><dt><code>grep eth0</code></dt><dd>NIC IRQs only — if one CPU column dominates, perf numbers are suspect.</dd></dl></div>\n<div class=\"cmd-block\"><pre>taskset -c 2-5 ./throughput_test</pre><dl class=\"cmd-explain\"><dt><code>taskset</code></dt><dd>Launch a process bound to specific CPUs.</dd><dt><code>-c 2-5</code></dt><dd>Allow CPUs 2 through 5 only.</dd><dt><code>./throughput_test</code></dt><dd>Your benchmark binary.</dd></dl></div>\n"
       },
       {
         "id": "expert",
         "title": "Expert",
         "badge": "🏆",
-        "minutes": 26,
-        "tagline": "cgroups, capabilities, perf, matrix testing",
-        "html": "\n<ul>\n<li><strong>cgroups:</strong> limit/account CPU/memory/I/O — foundation of containers and fair CI.</li>\n<li><strong>capabilities:</strong> <code>CAP_NET_RAW</code>/<code>CAP_NET_ADMIN</code> beat full root for capture tools.</li>\n<li><strong>perf:</strong> find hot functions and cache issues in SDK stacks.</li>\n<li><strong>Matrix:</strong> test across kernels/distros customers actually run.</li>\n</ul>\n<div class=\"tutorial-callout lab\"><strong>Expert checklist</strong><ul class=\"checklist\"><li>Document required groups/udev rules for the SDK</li><li>Add a preflight script: kernel, driver, device node, ethtool link</li><li>Record IRQ balance before publishing Gbps numbers</li></ul></div>\n<div class=\"tutorial-callout interview\"><strong>Leadership angle</strong><p>“We treat lab preflight as productized automation — it cut false failures by X%.”</p></div>\n\n<h4>Shipping lab quality</h4>\n<ul>\n<li>Preflight binary/script as a merge requirement for HW jobs.</li>\n<li>Capability-based test users instead of root passwords in Jenkins.</li>\n<li>Kernel panic/oops triage: reproduce, capture <code>journalctl -k</code>, bisect modules.</li>\n<li>Know when a bug is distro backports vs upstream kernel behavior.</li>\n</ul>"
+        "minutes": 35,
+        "tagline": "cgroups, capabilities, perf, reproducible labs",
+        "html": "\n<h4>1. Capabilities instead of root</h4>\n<div class=\"cmd-block\"><pre>man 7 capabilities</pre><dl class=\"cmd-explain\"><dt><code>capabilities(7)</code></dt><dd>Documents CAP_* privileges that split “root powers”.</dd></dl></div>\n<p>Examples: <code>CAP_NET_RAW</code> for sniffing, <code>CAP_NET_ADMIN</code> for interface config. Grant only what the tool needs.</p>\n<div class=\"cmd-block\"><pre>sudo setcap cap_net_raw,cap_net_admin+ep /usr/local/bin/lab-tool</pre><dl class=\"cmd-explain\"><dt><code>setcap</code></dt><dd>Attach capability bits to a binary.</dd><dt><code>cap_net_raw,cap_net_admin+ep</code></dt><dd>Effective+permitted caps for network admin/raw.</dd></dl></div>\n\n<h4>2. cgroups (why containers isolate resources)</h4>\n<p>cgroups limit/account CPU, memory, I/O for process groups. CI fairness and reproducible limits depend on them.</p>\n\n<h4>3. perf quick start</h4>\n<div class=\"cmd-block\"><pre>perf top</pre><dl class=\"cmd-explain\"><dt><code>perf top</code></dt><dd>Live CPU profile: which functions burn samples right now.</dd></dl></div>\n<div class=\"cmd-block\"><pre>perf record -g ./benchmark && perf report</pre><dl class=\"cmd-explain\"><dt><code>perf record -g</code></dt><dd>Record samples with call-graph.</dd><dt><code>./benchmark</code></dt><dd>Workload under test.</dd><dt><code>perf report</code></dt><dd>Interactive report of hot paths.</dd></dl></div>\n\n<h4>4. Ship a preflight script (professional bar)</h4>\n<ul>\n<li>Check <code>uname -r</code>, driver/module loaded, device node permissions</li>\n<li>Check link up via ethtool</li>\n<li>Print versions into CI artifacts</li>\n<li>Fail early with a clear message</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Line that sounds experienced</strong>\n<p>“We productized lab preflight — false failures from permissions/driver skew dropped dramatically.”</p></div>\n"
       }
     ],
     "resources": [
@@ -320,31 +320,31 @@
         "title": "Linux Journey",
         "url": "https://linuxjourney.com/",
         "source": "Linux Journey",
-        "note": "Friendly free path through Linux fundamentals."
+        "note": "Gentle free path through Linux fundamentals."
       },
       {
-        "title": "Free Electrons / Bootlin kernel labs (materials)",
-        "url": "https://bootlin.com/doc/training/linux-kernel/",
-        "source": "Bootlin",
-        "note": "High-quality free kernel/driver training slides."
-      },
-      {
-        "title": "man ss / man ethtool",
+        "title": "ss(8)",
         "url": "https://man7.org/linux/man-pages/man8/ss.8.html",
         "source": "man7",
-        "note": "Primary references for socket &amp; NIC tooling."
+        "note": "Socket statistics reference."
+      },
+      {
+        "title": "ethtool(8)",
+        "url": "https://man7.org/linux/man-pages/man8/ethtool.8.html",
+        "source": "man7",
+        "note": "NIC settings &amp; stats flags."
+      },
+      {
+        "title": "strace tutorial (die.net / man)",
+        "url": "https://man7.org/linux/man-pages/man1/strace.1.html",
+        "source": "man7",
+        "note": "Syscall tracer options."
       },
       {
         "title": "Linux Performance (Brendan Gregg)",
         "url": "https://www.brendangregg.com/linuxperf.html",
         "source": "Brendan Gregg",
-        "note": "Gold-standard free performance methodology maps."
-      },
-      {
-        "title": "capabilities(7)",
-        "url": "https://man7.org/linux/man-pages/man7/capabilities.7.html",
-        "source": "man7",
-        "note": "How to avoid running everything as root."
+        "note": "Best free performance methodology maps."
       }
     ]
   }

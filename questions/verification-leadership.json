@@ -402,33 +402,33 @@
       "explanation": "Operability/readability for on-call."
     }
   ],
-  "documentation": "<h3>Verification Leadership</h3>\n<p>This section mirrors the NVIDIA Software Verification Manager expectations: grow people, protect quality signal, stay technically credible.</p>\n<ul>\n<li>Risk-based tradeoffs under schedule pressure</li>\n<li>Mentoring & readable automation culture</li>\n<li>Cross-team promotion gates with HW/FW/SW</li>\n<li>Shift-left into architecture reviews</li>\n<li>Metrics that measure trust, not vanity</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Tradeoffs, ownership, and honest signoff</li>\n<li><strong>Advanced:</strong> Coaching, onboarding, cross-team alignment</li>\n<li><strong>Expert:</strong> Shift-left and metrics that matter</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://rework.withgoogle.com/guides/managers-identify-what-makes-a-great-manager/steps/learn-about-googles-manager-research/\" target=\"_blank\" rel=\"noopener noreferrer\">Google re:Work — Managers</a> — Free evidence-based management practices.</li><li><a href=\"https://leaddev.com/\" target=\"_blank\" rel=\"noopener noreferrer\">LeadDev articles</a> — Strong free/community articles on engineering leadership.</li><li><a href=\"https://www.manager-tools.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Manager Tools basics (podcast)</a> — Practical free podcast episodes on 1:1s and feedback.</li></ul>",
+  "documentation": "\n<h3>Verification Leadership — Study Guide</h3>\n<p>For the full interactive course, open this section’s <strong>Learn</strong> path (Basics → Advanced → Expert). Every important command is explained flag-by-flag there.</p>\n<h4>Level map</h4>\n<ul>\n<li><strong>Basics:</strong> Tradeoffs, ownership, honest signoff</li>\n<li><strong>Advanced:</strong> Coaching, onboarding, cross-team meetings</li>\n<li><strong>Expert:</strong> Shift-left and metrics that matter</li>\n</ul>\n<h4>Free resources</h4>\n<ul><li><a href=\"https://rework.withgoogle.com/guides/managers-identify-what-makes-a-great-manager/steps/learn-about-googles-manager-research/\" target=\"_blank\" rel=\"noopener noreferrer\">Google re:Work — Managers</a> — Evidence-based management practices.</li><li><a href=\"https://leaddev.com/\" target=\"_blank\" rel=\"noopener noreferrer\">LeadDev</a> — Engineering leadership articles.</li><li><a href=\"https://www.manager-tools.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Manager Tools podcast</a> — Practical 1:1s and feedback.</li></ul>",
   "tutorial": {
-    "intro": "Practice the management craft the NVIDIA posting asks for: hands-on technical credibility, mentoring, and protecting the quality signal.",
+    "intro": "Practice the management craft for a hands-on SDK verification leader: decisions, coaching, alignment, and protecting signal.",
     "levels": [
       {
         "id": "basics",
         "title": "Basics",
         "badge": "🌱",
-        "minutes": 20,
-        "tagline": "Tradeoffs, ownership, and honest signoff",
-        "html": "\n<ul>\n<li>Make <strong>risk-based</strong> calls: fast merge gate vs deep nightly.</li>\n<li>Never fake full signoff when HW deps slipped — renegotiate scoped criteria.</li>\n<li>Healthy scale = ownership + falling flakes + trusted gate (not raw test count).</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>STAR nugget</strong><p>Prepare a story where you protected signal under schedule pressure.</p></div>\n\n<h4>1:1 and feedback basics</h4>\n<ul>\n<li>Weekly 1:1s; separate people topics from status</li>\n<li>Feedback: specific behavior → impact → request</li>\n<li>Grow seniors by giving them framework ownership, not only tickets</li>\n</ul><h4>Decision template you can reuse</h4>\n<pre>Context: …\nOptions: A / B / C\nRecommendation: …\nResidual risk: …\nOwners + date to revisit: …</pre>\n<p>Write decisions down. Verbal-only calls evaporate under schedule pressure.</p>\n<h4>Quality of life for the team</h4>\n<ul><li>Protect focus blocks for framework work</li><li>Rotate on-call / triage fairly</li><li>Celebrate deleted flaky tests as much as new ones</li></ul>"
+        "minutes": 30,
+        "tagline": "Tradeoffs, ownership, honest signoff",
+        "html": "\n<p>Your job is not “more tests”. It is <strong>trusted signal</strong> for releases.</p>\n<pre>Decision record:\nContext: …\nOptions: A / B / C\nRecommendation: …\nResidual risk: …\nOwners + revisit date: …</pre>\n<div class=\"why-box\"><strong>Under schedule pressure</strong><p>Never fake full signoff when HW dependencies slipped. Renegotiate scoped criteria and name residual risk.</p></div>\n<ul>\n<li>Healthy scale: ownership, falling flake rate, trusted merge gate</li>\n<li>Unhealthy scale: raw test count with no runtime budget</li>\n</ul>\n\n<h4>Example: coverage vs speed conflict</h4>\n<ol>\n<li>Keep a 10-minute merge-blocking smoke on critical paths</li>\n<li>Move broad coverage to nightly</li>\n<li>Write residual risk for stakeholders</li>\n<li>Set a revisit date after the milestone</li>\n</ol>\n"
       },
       {
         "id": "advanced",
         "title": "Advanced",
         "badge": "🚀",
-        "minutes": 22,
-        "tagline": "Coaching, onboarding, cross-team alignment",
-        "html": "\n<ul>\n<li>Coach “clever but unreadable” toward on-call diagnosability.</li>\n<li>Onboarding: buddy, smoke day 1, first owned flake fix.</li>\n<li>Alignment meetings must produce interfaces, owners, exit criteria.</li>\n</ul>\n<div class=\"tutorial-callout tip\"><strong>Meeting rule</strong><p>No decision / no owner / no note = theater.</p></div>\n\n<h4>Stakeholder map</h4>\n<ul>\n<li>Architecture/design for shift-left</li>\n<li>FW/driver for promotion contracts</li>\n<li>DevOps for gate reliability</li>\n<li>Product for risk acceptance language</li>\n</ul><h4>Conflict patterns</h4>\n<ul>\n<li><em>Coverage vs speed:</em> split merge vs nightly; publish residual risk.</li>\n<li><em>Lab scarcity:</em> priority queue by customer impact, not who shouts loudest.</li>\n<li><em>Blame culture:</em> escape defects → process fix, not public shaming.</li>\n</ul>\n<p><strong>Practice:</strong> Draft the email you’d send when slipping a signoff date without losing trust.</p>"
+        "minutes": 30,
+        "tagline": "Coaching, onboarding, cross-team meetings",
+        "html": "\n<h4>Coaching “clever but unreadable”</h4>\n<ol>\n<li>Acknowledge ingenuity</li>\n<li>Set the standard: failures must be diagnosable at 2am</li>\n<li>Pair on a rewrite; add review checklist items</li>\n</ol>\n<h4>Onboarding in week 1</h4>\n<ul>\n<li>Buddy + architecture tour</li>\n<li>Run smoke locally/CI by day 2</li>\n<li>Own one flake fix with review mentorship</li>\n</ul>\n<div class=\"tutorial-callout tip\"><strong>Meeting rule</strong><p>No decision, no owner, no written note → theater.</p></div>\n\n<h4>Feedback script (say it out loud in practice)</h4>\n<p>“When failures only print ‘assert False’, on-call can’t act. Please include the invariant and key IDs in the message — I’ll help refactor one test today as the template.”</p>\n"
       },
       {
         "id": "expert",
         "title": "Expert",
         "badge": "🏆",
-        "minutes": 22,
+        "minutes": 30,
         "tagline": "Shift-left and metrics that matter",
-        "html": "\n<ul>\n<li>Institutionalize verification seats in design/architecture reviews.</li>\n<li>Measure runtime, flake %, escape defects, MTTR, ownership — not vanity counts.</li>\n<li>Mission: honest, fast confidence that the SDK works on real hardware at customer scale.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Close the loop</strong><p>Connect escape bugs to process changes (review checklist, new gate, new oracle).</p></div>\n\n<h4>Hiring &amp; org design signals</h4>\n<ul>\n<li>Interview for debugging narratives and systems thinking</li>\n<li>Balance lab ops talent with framework engineers</li>\n<li>Protect maker time; meetings need agendas and decisions</li>\n</ul><h4>System design for a verification org</h4>\n<ul>\n<li>Charter: what “done” means for SDK releases</li>\n<li>RACI across FW/driver/SDK/DevOps</li>\n<li>Quarterly quality review with escape taxonomy</li>\n<li>Career ladder: IC skills for debugging + framework design + influence</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Panel question</strong>How did you grow someone’s scope in 6 months? Have a named example ready.</div>"
+        "html": "\n<ul>\n<li>Require verification seats in design/architecture reviews</li>\n<li>Metrics: runtime, flake %, escape defects, MTTR, ownership % — not vanity counts</li>\n<li>Mission: honest, fast confidence the SDK works on real hardware at customer scale</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Panel story</strong>\n<p>Prepare a STAR story: protected quality signal under schedule pressure, and what process changed afterward.</p></div>\n\n<h4>Escape defect review agenda</h4>\n<ul>\n<li>What signal missed it?</li>\n<li>New test or new oracle?</li>\n<li>Owner + due date</li>\n<li>Process change (review checklist / gate)?</li>\n</ul>\n"
       }
     ],
     "resources": [
@@ -436,31 +436,31 @@
         "title": "Google re:Work — Managers",
         "url": "https://rework.withgoogle.com/guides/managers-identify-what-makes-a-great-manager/steps/learn-about-googles-manager-research/",
         "source": "Google re:Work",
-        "note": "Free evidence-based management practices."
+        "note": "Evidence-based management practices."
       },
       {
-        "title": "LeadDev articles",
+        "title": "LeadDev",
         "url": "https://leaddev.com/",
         "source": "LeadDev",
-        "note": "Strong free/community articles on engineering leadership."
+        "note": "Engineering leadership articles."
       },
       {
-        "title": "Manager Tools basics (podcast)",
+        "title": "Manager Tools podcast",
         "url": "https://www.manager-tools.com/",
         "source": "Manager Tools",
-        "note": "Practical free podcast episodes on 1:1s and feedback."
+        "note": "Practical 1:1s and feedback."
       },
       {
-        "title": "The Engineering Manager resources list",
+        "title": "engineer-manager reading list",
         "url": "https://github.com/ryanburgess/engineer-manager",
         "source": "Community",
-        "note": "Curated free reading list for new EM/tech leads."
+        "note": "Curated free EM resources."
       },
       {
-        "title": "Articulate quality with risk (ISTQB foundation syllabus PDF)",
+        "title": "ISTQB syllabi",
         "url": "https://istqb.org/",
         "source": "ISTQB",
-        "note": "Free syllabus PDFs help vocabulary for V&amp;V discussions."
+        "note": "Shared V&amp;V vocabulary (free PDFs)."
       }
     ]
   }

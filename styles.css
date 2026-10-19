@@ -562,6 +562,51 @@ header h1 {
     line-height: 1.45;
 }
 
+.doc-content .cmd-block {
+    margin: 18px 0 22px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--white);
+}
+
+.doc-content .cmd-block pre {
+    margin: 0;
+    border-radius: 0;
+}
+
+.doc-content .cmd-explain {
+    margin: 0;
+    padding: 12px 14px 14px;
+    background: #fafafa;
+}
+
+.doc-content .cmd-explain dt {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.88rem;
+    color: #ef6c00;
+    margin-top: 8px;
+}
+
+.doc-content .cmd-explain dt:first-child {
+    margin-top: 0;
+}
+
+.doc-content .cmd-explain dd {
+    margin: 2px 0 0 0;
+    color: #444;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+.doc-content .why-box {
+    background: #eef7ff;
+    border-left: 4px solid #1e88e5;
+    padding: 12px 14px;
+    margin: 14px 0;
+    border-radius: 8px;
+}
+
 .doc-content .checklist {
     list-style: none;
     margin-left: 0;

@@ -1,5 +1,5 @@
 // Bump when question formats/assets change so browsers don't keep a stale app.js/manifest.
-const ASSET_VERSION = '20261019b';
+const ASSET_VERSION = '20261019c';
 
 // Global data object
 let appData = {

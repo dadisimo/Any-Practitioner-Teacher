@@ -339,65 +339,65 @@
       "explanation": "Labels select which agents can run the job."
     }
   ],
-  "documentation": "<h3>CI/CD & DevOps for SDK Verification</h3>\n<p>Focus on <strong>signal quality</strong>, reproducible environments, and cross-component gates.</p>\n<ul>\n<li><strong>Git/Gerrit:</strong> reviews, Change-Id, patch sets</li>\n<li><strong>Jenkins:</strong> agents/labels, declarative pipelines, artifacts</li>\n<li><strong>Docker:</strong> golden images, mounts, version pins</li>\n<li><strong>Policy:</strong> flake quarantine, promotion matrices, merge blockers</li>\n</ul>\n<h3>Learn path</h3>\n<p>Open this section’s <strong>Learn</strong> button for the full Basics → Advanced → Expert journey (interactive in the app).</p>\n<h4>Quick remediation map</h4>\n<ul>\n<li><strong>Basics:</strong> Git → build → test → package</li>\n<li><strong>Advanced:</strong> Jenkins agents, Docker pins, flake policy</li>\n<li><strong>Expert:</strong> Promotion matrices across FW/driver/SDK</li>\n</ul>\n<h4>Start with these free resources</h4>\n<ul><li><a href=\"https://docs.docker.com/get-started/\" target=\"_blank\" rel=\"noopener noreferrer\">Docker Get Started</a> — Official free intro to images, containers, and volumes.</li><li><a href=\"https://www.jenkins.io/doc/book/pipeline/\" target=\"_blank\" rel=\"noopener noreferrer\">Jenkins Pipeline documentation</a> — Declarative pipelines &amp; agents from the source.</li><li><a href=\"https://git-scm.com/book/en/v2\" target=\"_blank\" rel=\"noopener noreferrer\">Pro Git book</a> — The free classic for branching, rebasing, and collaboration.</li></ul>",
+  "documentation": "\n<h3>CI/CD & DevOps for SDKs — Study Guide</h3>\n<p>For the full interactive course, open this section’s <strong>Learn</strong> path (Basics → Advanced → Expert). Every important command is explained flag-by-flag there.</p>\n<h4>Level map</h4>\n<ul>\n<li><strong>Basics:</strong> Git branches, Docker runs, and a pipeline mental model</li>\n<li><strong>Advanced:</strong> Jenkins agents, Gerrit Change-Ids, flake policy</li>\n<li><strong>Expert:</strong> Promotion matrices across firmware, driver, and SDK</li>\n</ul>\n<h4>Free resources</h4>\n<ul><li><a href=\"https://docs.docker.com/get-started/\" target=\"_blank\" rel=\"noopener noreferrer\">Docker Get Started</a> — Official free intro to images, containers, volumes.</li><li><a href=\"https://www.jenkins.io/doc/book/pipeline/\" target=\"_blank\" rel=\"noopener noreferrer\">Jenkins Pipeline book</a> — Declarative syntax and agents.</li><li><a href=\"https://git-scm.com/book/en/v2\" target=\"_blank\" rel=\"noopener noreferrer\">Pro Git book</a> — Free classic for branching and collaboration.</li></ul>",
   "tutorial": {
-    "intro": "Treat CI as a product: reproducible environments, honest gates, and cross-component promotion — not a red dashboard you ignore.",
+    "intro": "Learn CI/CD by understanding what each Git, Docker, and Jenkins command actually does — and how to design gates that tell the truth.",
     "levels": [
       {
         "id": "basics",
         "title": "Basics",
         "badge": "🌱",
-        "minutes": 21,
-        "tagline": "Git → build → test → package",
-        "html": "\n<ol>\n<li><strong>Build</strong> the SDK artifacts</li>\n<li><strong>Test</strong> fast checks on every change</li>\n<li><strong>Package/sign</strong> release candidates</li>\n<li><strong>Publish</strong> only after gates pass</li>\n</ol>\n<pre>git switch -c sdk-verify-fix\ndocker run --rm -it -v \"$PWD\":/workspace sdk-verify:1.2</pre>\n<div class=\"tutorial-callout tip\"><strong>Gerrit tip</strong><p><strong>Change-Id</strong> ties patch sets of one logical review together.</p></div>\n\n<h4>Artifact mindset</h4>\n<p>Every job should produce: logs, junit/xml, binary hashes, environment fingerprint (kernel, driver, image digest).</p>\n<ul class=\"checklist\"><li>Can you re-run the exact same bits next month?</li><li>Can a stranger debug from CI artifacts alone?</li></ul><h4>Dockerfile hygiene</h4>\n<pre>FROM ubuntu:22.04\nENV DEBIAN_FRONTEND=noninteractive\nRUN apt-get update && apt-get install -y python3 python3-pip \\\n && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace</pre>\n<p>Pin digests in production pipelines when possible.</p>"
+        "minutes": 30,
+        "tagline": "Git branches, Docker runs, and a pipeline mental model",
+        "html": "\n<p>Goal: move code through <strong>build → test → package</strong> with a reproducible environment.</p>\n<h4>1. Create a working branch</h4>\n<div class=\"cmd-block\"><pre>git switch -c sdk-verify-fix</pre><dl class=\"cmd-explain\"><dt><code>git switch</code></dt><dd>Change branches (modern alternative to git checkout).</dd><dt><code>-c sdk-verify-fix</code></dt><dd>Create a new branch with this name and switch to it.</dd></dl></div>\n<div class=\"cmd-block\"><pre>git status</pre><dl class=\"cmd-explain\"><dt><code>git status</code></dt><dd>Show staged/unstaged files and the current branch — always run before committing.</dd></dl></div>\n<div class=\"cmd-block\"><pre>git log -1 --oneline</pre><dl class=\"cmd-explain\"><dt><code>git log</code></dt><dd>Show commit history.</dd><dt><code>-1</code></dt><dd>Only the latest commit.</dd><dt><code>--oneline</code></dt><dd>Compact one-line format.</dd></dl></div>\n\n<h4>2. Run tests inside a container</h4>\n<div class=\"cmd-block\"><pre>docker run --rm -it -v \"$PWD\":/workspace -w /workspace sdk-verify:1.2 bash</pre><dl class=\"cmd-explain\"><dt><code>docker run</code></dt><dd>Create and start a container from an image.</dd><dt><code>--rm</code></dt><dd>Delete the container when it exits (keeps labs clean).</dd><dt><code>-it</code></dt><dd>Interactive terminal (stdin + TTY) so you get a shell.</dd><dt><code>-v \"$PWD\":/workspace</code></dt><dd>Bind-mount your current directory into /workspace in the container.</dd><dt><code>-w /workspace</code></dt><dd>Set working directory inside the container.</dd><dt><code>sdk-verify:1.2</code></dt><dd>Image name:tag — pin tags (or digests) for reproducibility.</dd><dt><code>bash</code></dt><dd>Command to run inside the container.</dd></dl></div>\n<div class=\"why-box\"><strong>Why Docker for verification</strong><p>The same pytest that passes on your laptop can fail on a Jenkins agent with a different driver/Python. Containers freeze the userspace toolchain. (Kernel/driver on the host may still differ — that is a separate pin.)</p></div>\n\n<h4>3. Minimal Dockerfile you can explain</h4>\n<pre>FROM ubuntu:22.04\nENV DEBIAN_FRONTEND=noninteractive\nRUN apt-get update \\\n && apt-get install -y python3 python3-pip \\\n && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace</pre>\n<ul>\n<li><code>FROM</code> — base image (start from a known OS).</li>\n<li><code>ENV DEBIAN_FRONTEND=noninteractive</code> — stop apt from prompting in CI.</li>\n<li><code>RUN apt-get ...</code> — install tools at build time; clean lists to shrink layers.</li>\n<li><code>WORKDIR</code> — default directory for later <code>RUN</code>/<code>CMD</code>.</li>\n</ul>\n<div class=\"cmd-block\"><pre>docker build -t sdk-verify:1.2 .</pre><dl class=\"cmd-explain\"><dt><code>docker build</code></dt><dd>Build an image from a Dockerfile.</dd><dt><code>-t sdk-verify:1.2</code></dt><dd>Tag the resulting image.</dd><dt><code>.</code></dt><dd>Build context = current directory (sends files to Docker daemon).</dd></dl></div>\n"
       },
       {
         "id": "advanced",
         "title": "Advanced",
         "badge": "🚀",
-        "minutes": 26,
-        "tagline": "Jenkins agents, Docker pins, flake policy",
-        "html": "\n<ul>\n<li><strong>Agent labels:</strong> route jobs to NIC/GPU lab pools.</li>\n<li><strong>Golden images:</strong> freeze toolchain/driver versions — kill “works on agent 3.”</li>\n<li><strong>Flakes:</strong> quarantine with owners; don’t infinite-retry into a fake green.</li>\n</ul>\n<pre>pipeline {\n  agent any\n  stages {\n    stage('Verify') {\n      steps { sh 'pytest -q' }\n    }\n  }\n}</pre>\n<div class=\"tutorial-callout pitfall\"><strong>Anti-pattern</strong><p>Marking the whole pipeline optional because it is red destroys organizational trust.</p></div>\n\n<h4>Branching &amp; review flow (Gerrit-style)</h4>\n<ol>\n<li>Local commits with Change-Id footer</li>\n<li>Push for review → patch sets iterate</li>\n<li>Verifiers (+1) / code owners (+2)</li>\n<li>Submit merges only when CI labels allow</li>\n</ol>\n<p>Map this to GitHub PRs if needed — the quality idea is the same: <strong>gated integration</strong>.</p><h4>Caching without lies</h4>\n<ul>\n<li>Cache dependencies, not test results that must be fresh</li>\n<li>Invalidate on lockfile changes</li>\n<li>Separate “build image” job from “run suite” job</li>\n</ul>"
+        "minutes": 40,
+        "tagline": "Jenkins agents, Gerrit Change-Ids, flake policy",
+        "html": "\n<h4>1. Declarative Jenkins pipeline (what each block means)</h4>\n<pre>pipeline {\n  agent any\n  stages {\n    stage('Verify') {\n      steps {\n        sh 'pytest -q'\n      }\n    }\n  }\n}</pre>\n<ul>\n<li><code>pipeline { }</code> — Declarative pipeline root.</li>\n<li><code>agent any</code> — Run on any available executor (replace with <code>label 'nic-lab'</code> for hardware).</li>\n<li><code>stages / stage</code> — Named phases shown in the UI.</li>\n<li><code>steps { sh '...' }</code> — Shell commands on the agent.</li>\n<li><code>pytest -q</code> — Quiet pytest; still fails the step on assertion errors.</li>\n</ul>\n<div class=\"why-box\"><strong>Agent labels</strong><p>Labels route jobs to machines with the right NICs/GPUs. Without them, hardware tests randomly land on empty VMs and “flake”.</p></div>\n\n<h4>2. Gerrit Change-Id</h4>\n<p>A <strong>Change-Id</strong> footer in the commit message ties patch sets of one logical review together as you amend. Interviewers expect you to know reviews iterate without new unrelated changes.</p>\n\n<h4>3. Flakes: the management-quality rule</h4>\n<ul>\n<li>Do <strong>not</strong> infinite-retry until green — that hides product risk.</li>\n<li>Quarantine with an owner + deadline, keep a minimal honest gate.</li>\n<li>Track flake rate as an SLO.</li>\n</ul>\n<div class=\"tutorial-callout pitfall\"><strong>Anti-pattern</strong><p>Marking the entire pipeline optional because it is red. That trains the org to ignore quality.</p></div>\n\n<div class=\"cmd-block\"><pre>git push origin HEAD:refs/for/master</pre><dl class=\"cmd-explain\"><dt><code>git push</code></dt><dd>Upload commits to the remote.</dd><dt><code>HEAD:refs/for/master</code></dt><dd>Gerrit-style refspec: create/update a review for master (server-specific).</dd></dl></div>\n<p>On GitHub you’d open a PR instead — same idea: reviewed integration, not direct push to main.</p>\n"
       },
       {
         "id": "expert",
         "title": "Expert",
         "badge": "🏆",
-        "minutes": 24,
-        "tagline": "Promotion matrices across FW/driver/SDK",
-        "html": "\n<p>In HW/SW orgs, <strong>compatibility is a release artifact</strong>.</p>\n<ul>\n<li>Promote firmware+driver pairs that passed joint smoke.</li>\n<li>SDK signs off only against promoted pairs.</li>\n<li>Nightlies must not silently mix unpromoted drops.</li>\n</ul>\n<div class=\"tutorial-callout interview\"><strong>Manager answer</strong><p>“I’d publish a compatibility matrix and a merge-blocking smoke on golden agents; nightlies expand coverage without lying about gate health.”</p></div>\n\n<h4>Operating a verification CI org</h4>\n<ul>\n<li>SLO: flake rate &lt; X%, merge gate p95 runtime &lt; Y minutes</li>\n<li>Error budgets for infra vs product failures</li>\n<li>Cost control: shard, cache, and retire redundant suites</li>\n<li>Security: no secrets in repos; short-lived tokens in Jenkins credentials</li>\n</ul><h4>Cross-team contract example</h4>\n<pre>SDK nightly consumes:\n  driver_version >= X (promoted)\n  fw_bundle = promoted/latest-stable\nFail closed if fingerprint mismatches.</pre>"
+        "minutes": 35,
+        "tagline": "Promotion matrices across firmware, driver, and SDK",
+        "html": "\n<p>In HW/SW companies, compatibility is a release artifact.</p>\n<pre>SDK nightly consumes:\n  driver_version >= promoted_min\n  fw_bundle = promoted/latest-stable\nFail closed if fingerprint mismatches.</pre>\n<ul>\n<li>Promote FW+driver pairs that passed joint smoke.</li>\n<li>SDK signs off only against promoted pairs.</li>\n<li>Publish environment fingerprints in every CI artifact.</li>\n</ul>\n<div class=\"cmd-block\"><pre>sha256sum dist/sdk.tar.gz > dist/sdk.tar.gz.sha256</pre><dl class=\"cmd-explain\"><dt><code>sha256sum</code></dt><dd>Compute a cryptographic hash of the artifact.</dd><dt><code>> file.sha256</code></dt><dd>Save the fingerprint for later verify/reproducibility.</dd></dl></div>\n<div class=\"tutorial-callout interview\"><strong>Manager/tech hybrid</strong>\n<p>“Merge-blocking smoke on golden agents; nightlies expand coverage; promotion contracts stop silent mix-and-match of FW/driver/SDK.”</p></div>\n\n<div class=\"cmd-block\"><pre>docker image inspect --format '{{.Id}}' sdk-verify:1.2</pre><dl class=\"cmd-explain\"><dt><code>docker image inspect</code></dt><dd>Show metadata for an image.</dd><dt><code>--format {{.Id}}</code></dt><dd>Print the image ID/digest-related id for fingerprinting CI.</dd></dl></div>\n"
       }
     ],
     "resources": [
       {
         "title": "Docker Get Started",
         "url": "https://docs.docker.com/get-started/",
-        "source": "Docker Docs",
-        "note": "Official free intro to images, containers, and volumes."
+        "source": "Docker",
+        "note": "Official free intro to images, containers, volumes."
       },
       {
-        "title": "Jenkins Pipeline documentation",
+        "title": "Jenkins Pipeline book",
         "url": "https://www.jenkins.io/doc/book/pipeline/",
         "source": "Jenkins",
-        "note": "Declarative pipelines &amp; agents from the source."
+        "note": "Declarative syntax and agents."
       },
       {
         "title": "Pro Git book",
         "url": "https://git-scm.com/book/en/v2",
         "source": "git-scm",
-        "note": "The free classic for branching, rebasing, and collaboration."
+        "note": "Free classic for branching and collaboration."
       },
       {
-        "title": "Gerrit documentation",
+        "title": "Gerrit docs",
         "url": "https://gerrit-review.googlesource.com/Documentation/",
         "source": "Gerrit",
-        "note": "Change-Ids, reviews, and submit requirements."
+        "note": "Change-Ids and submit requirements."
       },
       {
-        "title": "GitHub Skills (free hands-on)",
+        "title": "GitHub Skills",
         "url": "https://skills.github.com/",
         "source": "GitHub",
-        "note": "Interactive free courses on Git/Actions workflows."
+        "note": "Free hands-on Git/Actions courses."
       }
     ]
   }
