@@ -1,3 +1,6 @@
+// Bump when question formats/assets change so browsers don't keep a stale app.js/manifest.
+const ASSET_VERSION = '20261019b';
+
 // Global data object
 let appData = {
     sections: []
@@ -192,7 +195,7 @@ function renderOpenAnswerControls(question, submitHandlerName) {
 async function loadQuestionData() {
     try {
         // Load the manifest file that lists all available JSON files
-        const manifestResponse = await fetch('questions/manifest.json');
+        const manifestResponse = await fetch(`questions/manifest.json?v=${ASSET_VERSION}`, { cache: 'no-store' });
         if (!manifestResponse.ok) {
             throw new Error('Could not load questions/manifest.json. Run: node generate-manifest.js');
         }
@@ -206,7 +209,7 @@ async function loadQuestionData() {
         // Load all JSON files in parallel
         const loadPromises = jsonFiles.map(async (filename) => {
             try {
-                const response = await fetch(`questions/${filename}`);
+                const response = await fetch(`questions/${filename}?v=${ASSET_VERSION}`, { cache: 'no-store' });
                 if (!response.ok) {
                     console.warn(`Failed to load ${filename}: ${response.status}`);
                     return null;
@@ -230,16 +233,26 @@ async function loadQuestionData() {
         
         // Filter out null values and add to appData
         appData.sections = sections.filter(section => section !== null);
+
+        // Show Learn-path / job-prep sections first so they aren't buried under older quizzes
+        appData.sections.sort((a, b) => {
+            const at = sectionHasTutorial(a) ? 0 : 1;
+            const bt = sectionHasTutorial(b) ? 0 : 1;
+            if (at !== bt) return at - bt;
+            return String(a.title).localeCompare(String(b.title));
+        });
         
         if (appData.sections.length === 0) {
             throw new Error('No valid question sections loaded');
         }
-        
-        console.log(`Loaded ${appData.sections.length} question sections`);
+
+        const skipped = jsonFiles.length - appData.sections.length;
+        console.log(`Loaded ${appData.sections.length}/${jsonFiles.length} question sections` +
+            (skipped ? ` (${skipped} skipped — hard-refresh if this looks wrong)` : ''));
         return true;
     } catch (error) {
         console.error('Error loading question data:', error);
-        alert('Error loading quiz data. Please refresh the page.');
+        alert('Error loading quiz data. Please refresh the page (hard refresh: Cmd/Ctrl+Shift+R).');
         return false;
     }
 }
@@ -479,6 +492,14 @@ function startLearning() {
 function renderSections() {
     const container = document.getElementById('sections-container');
     container.innerHTML = '';
+
+    const hint = document.querySelector('.section-screen-hint');
+    if (hint) {
+        const learnCount = appData.sections.filter(sectionHasTutorial).length;
+        hint.textContent = `${appData.sections.length} sections available` +
+            (learnCount ? ` · ${learnCount} with a Learn path (Basics → Advanced → Expert)` : '') +
+            '. Sections with a Learn path appear first.';
+    }
     
     appData.sections.forEach(section => {
         const isCompleted = state.completedSections.includes(section.id);
