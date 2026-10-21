@@ -56,15 +56,17 @@
         "tcpdump -i eth0 icmp -v",
         "tcpdump -i eth0 -v icmp",
         "sudo tcpdump -i eth0 icmp -v",
-        "tcpdump -vi eth0 icmp"
+        "sudo tcpdump -v -i eth0 icmp",
+        "tcpdump -vi eth0 icmp",
+        "tcpdump -v -i eth0 icmp"
       ],
       "answerPatterns": [
-        "tcpdump(?=.*-i\\s*eth0)(?=.*icmp)(?=.*-v)",
-        "tcpdump(?=.*-vi\\s*eth0)(?=.*icmp)",
-        "tcpdump(?=.*-iv\\s*eth0)(?=.*icmp)"
+        "tcpdump(?=.*-i\\s*\\S+)(?=.*\\bicmp\\b)(?=.*-v)",
+        "tcpdump(?=.*-vi\\s*\\S+)(?=.*\\bicmp\\b)",
+        "tcpdump(?=.*-iv\\s*\\S+)(?=.*\\bicmp\\b)"
       ],
       "modelAnswer": "tcpdump -i eth0 -v icmp",
-      "explanation": "Interface selection (-i), ICMP filter, and verbose (-v) are the key pieces for this capture."
+      "explanation": "Interface selection (-i), ICMP filter, and verbose (-v) are the key pieces for this capture. Any real interface name is fine if those pieces are present."
     },
     {
       "id": 4,
