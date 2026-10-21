@@ -1,5 +1,5 @@
 // Bump when question formats/assets change so browsers don't keep a stale app.js/manifest.
-const ASSET_VERSION = '20261019c';
+const ASSET_VERSION = '20261021a';
 
 // Global data object
 let appData = {
@@ -107,7 +107,72 @@ function normalizeCodeAnswer(value) {
         .filter(line => line.length > 0 && !line.startsWith('#'))
         .join('\n')
         .toLowerCase()
+        .replace(/^(sudo|doas)\s+/, '')
         .trim();
+}
+
+// Bare NIC names used as command args (eth0, wlp4s0, ens33, docker0, lo, any).
+// Requires a digit (except lo/any) so commands like `docker` are not treated as ifaces.
+const BARE_IFACE_TOKEN_RE = /^(?:(?:eth|enp|ens|eno|enx|em|wlan|wlp|wlx|wl|bond|br|docker|veth|tun|tap|usb|wwan)[a-z]*\d+[a-z0-9._\-]*|lo|any)$/;
+
+function expandShortFlagCluster(token) {
+    // Expand -vi / -nn into -v -i / -n -n. Leave --long and mixed tokens alone.
+    if (!/^-[a-z]{2,}$/.test(token)) return [token];
+    return token.slice(1).split('').map(flag => `-${flag}`);
+}
+
+function tokenizeCodeAnswer(value) {
+    const parts = normalizeCodeAnswer(value).split(/\s+/).filter(Boolean);
+    const tokens = [];
+
+    for (const part of parts) {
+        if (part === 'sudo' || part === 'doas') continue;
+        for (const piece of expandShortFlagCluster(part)) {
+            tokens.push(piece);
+        }
+    }
+
+    // Normalize interface args so eth0 and wlp4s0 compare equal.
+    const normalizedTokens = [];
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        const next = tokens[i + 1];
+        // tcpdump -i <iface>: any non-flag token after -i is the interface.
+        if (token === '-i' && next && !next.startsWith('-')) {
+            normalizedTokens.push('-i', '__IFACE__');
+            i++;
+            continue;
+        }
+        // ethtool eth0 / ethtool -k eth0: replace recognizable NIC names only.
+        if (BARE_IFACE_TOKEN_RE.test(token)) {
+            normalizedTokens.push('__IFACE__');
+            continue;
+        }
+        normalizedTokens.push(token);
+    }
+
+    return normalizedTokens;
+}
+
+function tokenFrequencyMap(tokens) {
+    const counts = new Map();
+    for (const token of tokens) {
+        counts.set(token, (counts.get(token) || 0) + 1);
+    }
+    return counts;
+}
+
+// True when user answer contains all expected tokens (order-independent).
+// Allows extra harmless flags (e.g. tcpdump -n) and privilege prefixes.
+function codeAnswerCovers(userAnswer, expectedAnswer) {
+    const userCounts = tokenFrequencyMap(tokenizeCodeAnswer(userAnswer));
+    const expectedCounts = tokenFrequencyMap(tokenizeCodeAnswer(expectedAnswer));
+    if (expectedCounts.size === 0) return false;
+
+    for (const [token, needed] of expectedCounts) {
+        if ((userCounts.get(token) || 0) < needed) return false;
+    }
+    return true;
 }
 
 function gradeOpenAnswer(question, rawAnswer) {
@@ -123,7 +188,19 @@ function gradeOpenAnswer(question, rawAnswer) {
         const expected = type === 'code'
             ? normalizeCodeAnswer(candidate)
             : normalizeTextAnswer(candidate);
-        if (expected && (normalized === expected || normalized.includes(expected) || expected.includes(normalized))) {
+        if (!expected) continue;
+
+        if (type === 'code') {
+            // Prefer token coverage so flag order, sudo, and NIC names can differ.
+            // Do not use expected.includes(normalized): that accepts incomplete prefixes
+            // like "tcpdump -i eth0" against "tcpdump -i eth0 -v icmp".
+            if (normalized === expected || codeAnswerCovers(rawAnswer, candidate) || normalized.includes(expected)) {
+                return true;
+            }
+            continue;
+        }
+
+        if (normalized === expected || normalized.includes(expected) || expected.includes(normalized)) {
             return true;
         }
     }
